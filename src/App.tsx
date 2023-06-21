@@ -70,6 +70,8 @@ function App() {
           );
           const dataFormatted: FormattedDataType[] = data.map(d => ({
             ...d,
+            Description: d.Description.trim(),
+            'Project Name': d['Project Name'].trim(),
             'Start year': +d['Start year'],
             'End year':
               d['End year'] && d['End year'] !== ''
