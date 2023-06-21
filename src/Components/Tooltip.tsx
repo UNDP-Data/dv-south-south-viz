@@ -1,9 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import styled from 'styled-components';
 import { format } from 'd3-format';
 import { HoverDataType } from '../Types';
 
 interface Props {
   data: HoverDataType;
+  selectedOption:
+    | 'No. of Projects As Host Countries'
+    | 'No. of Projects As Provider Countries';
+  filterByProvider: string[];
+  filterByHost: string[];
 }
 
 interface TooltipElProps {
@@ -37,7 +44,7 @@ const TooltipEl = styled.div<TooltipElProps>`
 `;
 
 export function Tooltip(props: Props) {
-  const { data } = props;
+  const { data, selectedOption, filterByProvider, filterByHost } = props;
   const formatData = (d: undefined | number) => {
     if (d === undefined) return d;
 
@@ -73,22 +80,35 @@ export function Tooltip(props: Props) {
           </span>
         </h5>
       </div>
-      <p className='undp-typography margin-bottom-05'>
-        No of Projects as Host:{' '}
-        <span className='bold'>
-          {data.noOfProjectsAsHost === undefined
-            ? 'N/A'
-            : formatData(data.noOfProjectsAsHost)}
-        </span>
-      </p>
-      <p className='undp-typography margin-bottom-05'>
-        No of Projects as Provider:{' '}
-        <span className='bold'>
-          {data.noOfProjectsAsProvider === undefined
-            ? 'N/A'
-            : formatData(data.noOfProjectsAsProvider)}
-        </span>
-      </p>
+      {selectedOption === 'No. of Projects As Host Countries' ? (
+        <p className='undp-typography margin-bottom-05'>
+          No of Projects as Host
+          {filterByHost.length === 0
+            ? ''
+            : ` with ${filterByProvider
+                .toString()
+                .replaceAll(',', ', ')} as Provider`}
+          :{' '}
+          <span className='bold'>
+            {data.noOfProjectsAsHost === undefined
+              ? 'N/A'
+              : formatData(data.noOfProjectsAsHost)}
+          </span>
+        </p>
+      ) : (
+        <p className='undp-typography margin-bottom-05'>
+          No of Projects as Provider
+          {filterByHost.length === 0
+            ? ''
+            : ` with ${filterByHost.toString().replaceAll(',', ', ')} as Host`}
+          :{' '}
+          <span className='bold'>
+            {data.noOfProjectsAsProvider === undefined
+              ? 'N/A'
+              : formatData(data.noOfProjectsAsProvider)}
+          </span>
+        </p>
+      )}
     </TooltipEl>
   );
 }

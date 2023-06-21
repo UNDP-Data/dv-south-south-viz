@@ -29,7 +29,7 @@ export interface DataTypeFromCSV {
   'Provider Country/ies': string;
   'Regions Involved': string;
   'Entity/ies Supporting and/or Implementing': string;
-  'Is the private sector involved? ': string;
+  'Is the private sector involved?': string;
   'Does it involve LDCs?': string;
   'UNDP as Implementor': string;
   'UNDP as Donor': string;
@@ -50,7 +50,7 @@ export interface FormattedDataType {
   'Provider Country/ies': string[];
   'Regions Involved': string[];
   'Entity/ies Supporting and/or Implementing': string[];
-  'Is the private sector involved? ': boolean;
+  'Is the private sector involved?': boolean;
   'Does it involve LDCs?': boolean;
   'UNDP as Implementor': boolean;
   'UNDP as Donor': boolean;

@@ -18,10 +18,14 @@ interface Props {
   filterByTheme: string[];
   filterByProvider: string[];
   filterByHost: string[];
+  regionList: string[];
+  LDCsInvolved: boolean;
+  showPrivateSupport: boolean;
+  showUNDPDonor: boolean;
+  showUNDPImplemented: boolean;
 }
 
 const El = styled.div`
-  width: calc(100% - 2rem);
   overflow: auto;
   position: relative;
   background-color: var(--gray-200);
@@ -29,34 +33,35 @@ const El = styled.div`
 `;
 
 const ProjectCardContainer = styled.div`
-  width: calc(25% - 0.75rem);
+  width: calc(25% - 0.75rem - 2px);
   min-width: min(100%, 320px);
   color: var(--black);
   text-decoration: none;
-  background-color: var(--gray-200);
+  background-color: var(--gray-100);
   align-items: stretch;
   display: flex;
+  border: 1px solid var(--gray-300);
   cursor: pointer;
   @media (min-width: 888px) {
-    width: calc(50% - 0.5rem);
+    width: calc(50% - 0.5rem - 2px);
   }
   @media (min-width: 320px) {
-    width: 100%;
+    width: calc(100% - 2px);
   }
   @media (min-width: 704px) {
-    width: calc(50% - 0.5rem);
+    width: calc(50% - 0.5rem - 2px);
   }
   @media (min-width: 1312px) {
-    width: calc(33.3% - 0.67rem);
+    width: calc(33.3% - 0.67rem - 2px);
   }
   @media (min-width: 1440px) {
-    width: calc(25% - 0.75rem);
+    width: calc(25% - 0.75rem - 2px);
   }
   @media (min-width: 2196px) {
-    width: calc(20% - 0.8rem);
+    width: calc(20% - 0.8rem - 2px);
   }
   &:hover {
-    background-color: var(--gray-300);
+    background-color: var(--gray-400);
   }
 `;
 
@@ -69,6 +74,11 @@ export function VizArea(props: Props) {
     filterByProvider,
     filterBySDG,
     filterByTheme,
+    showUNDPImplemented,
+    showUNDPDonor,
+    showPrivateSupport,
+    LDCsInvolved,
+    regionList,
   } = props;
   const [clickedProject, setClickedProject] = useState<
     undefined | FormattedDataType
@@ -110,16 +120,28 @@ export function VizArea(props: Props) {
               filterByTheme.includes(item),
             ) || d['Thematic Areas'].some(item => filterByTheme.includes(item)),
         );
+  const dataFilteredByUNDPDonor = !showUNDPDonor
+    ? dataFilteredByThemes
+    : dataFilteredByThemes.filter(d => d['UNDP as Donor']);
+  const dataFilteredByPrivateSector = !showPrivateSupport
+    ? dataFilteredByUNDPDonor
+    : dataFilteredByUNDPDonor.filter(d => d['Is the private sector involved?']);
+  const dataFilteredByUNDPImplementor = !showUNDPImplemented
+    ? dataFilteredByPrivateSector
+    : dataFilteredByPrivateSector.filter(d => d['UNDP as Implementor']);
+  const dataFilteredByLDCsInvolvement = !LDCsInvolved
+    ? dataFilteredByUNDPImplementor
+    : dataFilteredByUNDPImplementor.filter(d => d['Does it involve LDCs?']);
   const hostCountryList = [
     ...new Set(
-      dataFilteredByThemes
+      dataFilteredByLDCsInvolvement
         .map(d => d['Host/Recipient Country/ies'])
         .reduce((acc, curr) => acc.concat(curr), []),
     ),
   ];
   const providerCountryList = [
     ...new Set(
-      dataFilteredByThemes
+      dataFilteredByLDCsInvolvement
         .map(d => d['Provider Country/ies'])
         .reduce((acc, curr) => acc.concat(curr), []),
     ),
@@ -128,7 +150,7 @@ export function VizArea(props: Props) {
     <div>
       <div className='stat-card-container margin-bottom-05'>
         <div className='stat-card no-hover' style={{ width: '33.33%' }}>
-          <h3>{dataFilteredByThemes.length}</h3>
+          <h3>{dataFilteredByLDCsInvolvement.length}</h3>
           <p>No. of Projects</p>
         </div>
         {filterByHost.length > 0 ? null : (
@@ -146,25 +168,56 @@ export function VizArea(props: Props) {
       </div>
       {filterByHost.length > 0 && filterByProvider.length > 0 ? null : (
         <MapArea
-          data={dataFilteredByThemes}
+          data={dataFilteredByLDCsInvolvement}
           countryTaxonomy={countryTaxonomy}
           worldShape={worldShape}
           showHost={filterByHost.length === 0}
           showProvider={filterByProvider.length === 0}
+          filterByProvider={filterByProvider}
+          filterByHost={filterByHost}
         />
       )}
-
-      <El className='undp-scrollbar margin-top-07'>
+      <div className='flex-div flex-wrap'>
+        <El
+          className='undp-scrollbar margin-top-07'
+          style={{ width: 'calc(66.67% - 2.5rem)' }}
+        >
+          <h5 className='undp-typography bold margin-bottom-05'>
+            Projects by SDGs
+          </h5>
+          <div style={{ height: '400px', minWidth: '800px' }}>
+            <BarChart
+              data={dataFilteredByLDCsInvolvement}
+              type='SDGs'
+              regionList={regionList}
+            />
+          </div>
+        </El>
+        <El
+          className='undp-scrollbar margin-top-07'
+          style={{ width: 'calc(33.33% - 2.5rem)' }}
+        >
+          <h5 className='undp-typography bold margin-bottom-05'>
+            Projects by Regions Involved
+          </h5>
+          <div style={{ height: '400px' }}>
+            <BarChart
+              data={dataFilteredByLDCsInvolvement}
+              type='regions'
+              regionList={regionList}
+            />
+          </div>
+        </El>
+      </div>
+      <div
+        className='margin-top-07'
+        style={{
+          backgroundColor: 'var(--gray-200)',
+          padding: 'var(--spacing-05)',
+        }}
+      >
         <h5 className='undp-typography bold margin-bottom-05'>
-          Projects by SDGs
-        </h5>
-        <div style={{ height: '400px', minWidth: '800px' }}>
-          <BarChart data={dataFilteredByThemes} />
-        </div>
-      </El>
-      <div className='margin-top-07'>
-        <h5 className='undp-typography bold margin-bottom-05'>
-          All Projects ({dataFilteredByThemes.length})
+          All Projects ({dataFilteredByLDCsInvolvement.length})
         </h5>
         <Input
           placeholder='Search users'
@@ -176,7 +229,7 @@ export function VizArea(props: Props) {
           }}
         />
         <div className='flex-div flex-wrap'>
-          {dataFilteredByThemes.filter(d =>
+          {dataFilteredByLDCsInvolvement.filter(d =>
             searchQuery
               ? d.Description.toLowerCase().includes(
                   searchQuery?.toLowerCase(),
@@ -198,7 +251,7 @@ export function VizArea(props: Props) {
               No Projects available with the selected criteria
             </div>
           ) : null}
-          {dataFilteredByThemes
+          {dataFilteredByLDCsInvolvement
             .filter(d =>
               searchQuery
                 ? d.Description.toLowerCase().includes(
@@ -378,13 +431,13 @@ export function VizArea(props: Props) {
                     height: '1rem',
                     borderRadius: '1rem',
                     backgroundColor: clickedProject[
-                      'Is the private sector involved? '
+                      'Is the private sector involved?'
                     ]
                       ? 'var(--dark-green)'
                       : 'var(--dark-red)',
                   }}
                 />
-                {clickedProject['Is the private sector involved? ']
+                {clickedProject['Is the private sector involved?']
                   ? 'Yes'
                   : 'No'}
               </div>

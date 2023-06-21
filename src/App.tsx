@@ -3,7 +3,7 @@ import { csv, json } from 'd3-request';
 import { useEffect, useState } from 'react';
 import sortBy from 'lodash.sortby';
 import styled from 'styled-components';
-import { Select } from 'antd';
+import { Select, Switch } from 'antd';
 import {
   CountryGroupDataType,
   DataTypeFromCSV,
@@ -14,7 +14,7 @@ import { SDG_LIST } from './Constants';
 
 const FilterEl = styled.div`
   width: calc(25% - 0.75rem);
-  min-width: 20rem;
+  min-width: 10rem;
   flex-grow: 1;
 `;
 
@@ -27,6 +27,11 @@ function App() {
   const [filterByProvider, setFilterByProvider] = useState<string[]>([]);
   const [filterByTheme, setFilterByTheme] = useState<string[]>([]);
   const [filterBySDG, setFilterBySDG] = useState<string[]>([]);
+  const [regionList, setRegionList] = useState<string[]>([]);
+  const [showUNDPImplemented, setShowUNDPImplemented] = useState(false);
+  const [showUNDPDonor, setShowUNDPDonor] = useState(false);
+  const [showPrivateSupport, setShowPrivateSupport] = useState(false);
+  const [LDCsInvolved, setLDCsInvolved] = useState(false);
   const [countryTaxonomy, setCountryTaxonomy] = useState<
     CountryGroupDataType[]
   >([]);
@@ -86,8 +91,8 @@ function App() {
             Links: d.Links.split(',')
               .filter(el => el && el !== '')
               .map(el => el.trim()),
-            'Is the private sector involved? ':
-              d['Is the private sector involved? '] === 'YES',
+            'Is the private sector involved?':
+              d['Is the private sector involved?'] === 'YES',
             'Thematic Areas': d['Thematic Areas']
               .split(',')
               .filter(el => el && el !== '')
@@ -120,7 +125,17 @@ function App() {
               ]),
             ),
           ];
+          const RegionList = [
+            ...new Set([
+              ...new Set(
+                dataFormatted
+                  .map(d => d['Regions Involved'])
+                  .reduce((acc, curr) => acc.concat(curr), []),
+              ),
+            ]),
+          ];
           setThematicArea(sortBy(thematicAreaList, d => d));
+          setRegionList(sortBy(RegionList, d => d));
         },
       );
   }, []);
@@ -129,109 +144,174 @@ function App() {
     <div className='undp-container'>
       {worldShape && rawData && countryTaxonomy && thematicArea ? (
         <div>
-          <div className='flex-div flex-wrap margin-bottom-05'>
-            <FilterEl>
-              <div className='label'>Filter By Host Country</div>
-              <Select
-                className='undp-select'
-                placeholder='All Host Countries'
-                mode='multiple'
-                maxTagCount='responsive'
-                allowClear
-                clearIcon={<div className='clearIcon' />}
-                onChange={d => {
-                  const countryID = countryTaxonomy
-                    .filter(el => d.indexOf(el['Country or Area']) !== -1)
-                    .map(el => el['Alpha-3 code-1']);
-                  if (d.length === 0) setFilterByHost([]);
-                  else setFilterByHost(countryID);
-                }}
-              >
-                {countryTaxonomy.map(d => (
-                  <Select.Option
-                    className='undp-select-option'
-                    key={d['Country or Area']}
-                  >
-                    {d['Country or Area']}
-                  </Select.Option>
-                ))}
-              </Select>
-            </FilterEl>
-            <FilterEl>
-              <div className='label'>Filter By Provider Country</div>
-              <Select
-                className='undp-select'
-                placeholder='All Provider Countries'
-                mode='multiple'
-                maxTagCount='responsive'
-                allowClear
-                clearIcon={<div className='clearIcon' />}
-                onChange={d => {
-                  const countryID = countryTaxonomy
-                    .filter(el => d.indexOf(el['Country or Area']) !== -1)
-                    .map(el => el['Alpha-3 code-1']);
-                  if (d.length === 0) setFilterByProvider([]);
-                  else setFilterByProvider(countryID);
-                }}
-              >
-                {countryTaxonomy.map(d => (
-                  <Select.Option
-                    className='undp-select-option'
-                    key={d['Country or Area']}
-                  >
-                    {d['Country or Area']}
-                  </Select.Option>
-                ))}
-              </Select>
-            </FilterEl>
-            <FilterEl>
-              <div className='label'>Filter By Thematic Area</div>
-              <Select
-                className='undp-select'
-                placeholder='All Themes'
-                mode='multiple'
-                maxTagCount='responsive'
-                allowClear
-                clearIcon={<div className='clearIcon' />}
-                onChange={d => {
-                  setFilterByTheme(d || []);
-                }}
-              >
-                {thematicArea.map(d => (
-                  <Select.Option className='undp-select-option' key={d}>
-                    {d}
-                  </Select.Option>
-                ))}
-              </Select>
-            </FilterEl>
-            <FilterEl>
-              <div className='label'>Filter By SDGs</div>
-              <Select
-                className='undp-select'
-                placeholder='All SDGs'
-                mode='multiple'
-                maxTagCount='responsive'
-                allowClear
-                clearIcon={<div className='clearIcon' />}
-                onChange={d => {
-                  setFilterBySDG(d || []);
-                }}
-              >
-                {SDG_LIST.map(d => (
-                  <Select.Option className='undp-select-option' key={d}>
-                    {d}
-                  </Select.Option>
-                ))}
-              </Select>
-            </FilterEl>
+          <div
+            className='margin-bottom-05 padding-top-05 padding-bottom-05'
+            style={{
+              position: 'sticky',
+              top: 0,
+              zIndex: 100,
+              backgroundColor: 'var(--white)',
+            }}
+          >
+            <div className='flex-div flex-wrap margin-bottom-05'>
+              <FilterEl>
+                <div className='label'>Filter By Host Country</div>
+                <Select
+                  className='undp-select'
+                  placeholder='All Host Countries'
+                  mode='multiple'
+                  maxTagCount='responsive'
+                  allowClear
+                  clearIcon={<div className='clearIcon' />}
+                  onChange={d => {
+                    const countryID = countryTaxonomy
+                      .filter(el => d.indexOf(el['Country or Area']) !== -1)
+                      .map(el => el['Alpha-3 code-1']);
+                    if (d.length === 0) setFilterByHost([]);
+                    else setFilterByHost(countryID);
+                  }}
+                >
+                  {countryTaxonomy.map(d => (
+                    <Select.Option
+                      className='undp-select-option'
+                      key={d['Country or Area']}
+                    >
+                      {d['Country or Area']}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </FilterEl>
+              <FilterEl>
+                <div className='label'>Filter By Provider Country</div>
+                <Select
+                  className='undp-select'
+                  placeholder='All Provider Countries'
+                  mode='multiple'
+                  maxTagCount='responsive'
+                  allowClear
+                  clearIcon={<div className='clearIcon' />}
+                  onChange={d => {
+                    const countryID = countryTaxonomy
+                      .filter(el => d.indexOf(el['Country or Area']) !== -1)
+                      .map(el => el['Alpha-3 code-1']);
+                    if (d.length === 0) setFilterByProvider([]);
+                    else setFilterByProvider(countryID);
+                  }}
+                >
+                  {countryTaxonomy.map(d => (
+                    <Select.Option
+                      className='undp-select-option'
+                      key={d['Country or Area']}
+                    >
+                      {d['Country or Area']}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </FilterEl>
+              <FilterEl>
+                <div className='label'>Filter By Thematic Area</div>
+                <Select
+                  className='undp-select'
+                  placeholder='All Themes'
+                  mode='multiple'
+                  maxTagCount='responsive'
+                  allowClear
+                  clearIcon={<div className='clearIcon' />}
+                  onChange={d => {
+                    setFilterByTheme(d || []);
+                  }}
+                >
+                  {thematicArea.map(d => (
+                    <Select.Option className='undp-select-option' key={d}>
+                      {d}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </FilterEl>
+              <FilterEl>
+                <div className='label'>Filter By SDGs</div>
+                <Select
+                  className='undp-select'
+                  placeholder='All SDGs'
+                  mode='multiple'
+                  maxTagCount='responsive'
+                  allowClear
+                  clearIcon={<div className='clearIcon' />}
+                  onChange={d => {
+                    setFilterBySDG(d || []);
+                  }}
+                >
+                  {SDG_LIST.map(d => (
+                    <Select.Option className='undp-select-option' key={d}>
+                      {d}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </FilterEl>
+            </div>
+            <div className='flex-div flex-wrap'>
+              <FilterEl>
+                <div className='label'>
+                  Only Show Project Implemented by UNDP
+                </div>
+                <Switch
+                  checked={showUNDPImplemented}
+                  className='undp-switch'
+                  onChange={e => {
+                    setShowUNDPImplemented(e);
+                  }}
+                />
+              </FilterEl>
+              <FilterEl>
+                <div className='label'>
+                  Only Show Project with UNDP as Donor
+                </div>
+                <Switch
+                  checked={showUNDPDonor}
+                  className='undp-switch'
+                  onChange={e => {
+                    setShowUNDPDonor(e);
+                  }}
+                />
+              </FilterEl>
+              <FilterEl>
+                <div className='label'>
+                  Only Show Project with Private Sector Support
+                </div>
+                <Switch
+                  checked={showPrivateSupport}
+                  className='undp-switch'
+                  onChange={e => {
+                    setShowPrivateSupport(e);
+                  }}
+                />
+              </FilterEl>
+              <FilterEl>
+                <div className='label'>
+                  Only Show Project with LDCs Involved
+                </div>
+                <Switch
+                  checked={LDCsInvolved}
+                  className='undp-switch'
+                  onChange={e => {
+                    setLDCsInvolved(e);
+                  }}
+                />
+              </FilterEl>
+            </div>
           </div>
           <VizArea
             filterBySDG={filterBySDG}
             filterByTheme={filterByTheme}
             filterByHost={filterByHost}
             filterByProvider={filterByProvider}
+            LDCsInvolved={LDCsInvolved}
+            showPrivateSupport={showPrivateSupport}
+            showUNDPDonor={showUNDPDonor}
+            showUNDPImplemented={showUNDPImplemented}
             data={rawData}
             countryTaxonomy={countryTaxonomy}
+            regionList={regionList}
             worldShape={worldShape}
           />
         </div>

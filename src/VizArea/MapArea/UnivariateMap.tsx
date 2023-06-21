@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import styled from 'styled-components';
-import { geoMercator } from 'd3-geo';
+import { geoWinkel3 } from 'd3-geo-projection';
 import UNDPColorModule from 'undp-viz-colors';
 import { zoom } from 'd3-zoom';
 import { format } from 'd3-format';
@@ -21,6 +21,8 @@ interface Props {
     | 'No. of Projects As Host Countries';
   worldShape: any;
   countryTaxonomy: CountryGroupDataType[];
+  filterByHost: string[];
+  filterByProvider: string[];
 }
 
 const LegendEl = styled.div`
@@ -42,7 +44,14 @@ const G = styled.g`
 `;
 
 export function UnivariateMap(props: Props) {
-  const { data, countryTaxonomy, worldShape, selectedOption } = props;
+  const {
+    data,
+    countryTaxonomy,
+    worldShape,
+    selectedOption,
+    filterByHost,
+    filterByProvider,
+  } = props;
   const [selectedColor, setSelectedColor] = useState<string | undefined>(
     undefined,
   );
@@ -54,10 +63,10 @@ export function UnivariateMap(props: Props) {
   const svgHeight = window.innerWidth > 960 ? 640 : 530;
   const mapSvg = useRef<SVGSVGElement>(null);
   const mapG = useRef<SVGGElement>(null);
-  const projection = geoMercator()
+  const projection = geoWinkel3()
     .rotate([0, 0])
-    .scale(150)
-    .translate([475, 440]);
+    .scale(200)
+    .translate([475, 375]);
   const valueArray = [2, 5, 7, 10, 15];
   const colorArray = UNDPColorModule.sequentialColors.neutralColorsx06;
   const colorScale = scaleThreshold<number, string>()
@@ -340,7 +349,7 @@ export function UnivariateMap(props: Props) {
       </svg>
       <LegendEl>
         <h6 className='undp-typography'>{selectedOption}</h6>
-        <svg width='100%' viewBox={`0 0 ${400} ${30}`}>
+        <svg width='100%' viewBox={`0 0 ${340} ${30}`}>
           <g>
             {valueArray.map((d, i) => (
               <g
@@ -396,40 +405,27 @@ export function UnivariateMap(props: Props) {
                 style={{ cursor: 'pointer' }}
               />
             </g>
-            <g>
-              <g
-                key='null'
-                onMouseOver={() => {
-                  setSelectedColor('#f5f9fe');
-                }}
-                onMouseLeave={() => {
-                  setSelectedColor(undefined);
-                }}
-                style={{ cursor: 'pointer' }}
-              >
-                <rect
-                  x={340}
-                  y={1}
-                  width={38}
-                  height={8}
-                  fill='#f5f9fe'
-                  stroke={selectedColor === '#f5f9fe' ? '#212121' : '#f5f9fe'}
-                />
-                <text
-                  x={360}
-                  y={25}
-                  textAnchor='middle'
-                  fontSize={12}
-                  fill='#212121'
-                >
-                  Missing
-                </text>
-              </g>
-            </g>
           </g>
         </svg>
       </LegendEl>
-      {hoverData ? <Tooltip data={hoverData} /> : null}
+      {hoverData ? (
+        <Tooltip
+          data={hoverData}
+          selectedOption={selectedOption}
+          filterByProvider={filterByProvider.map(
+            d =>
+              countryTaxonomy[
+                countryTaxonomy.findIndex(el => el['Alpha-3 code-1'] === d)
+              ]['Country or Area'],
+          )}
+          filterByHost={filterByHost.map(
+            d =>
+              countryTaxonomy[
+                countryTaxonomy.findIndex(el => el['Alpha-3 code-1'] === d)
+              ]['Country or Area'],
+          )}
+        />
+      ) : null}
     </div>
   );
 }

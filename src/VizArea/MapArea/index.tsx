@@ -15,6 +15,8 @@ interface Props {
   countryTaxonomy: CountryGroupDataType[];
   showHost: boolean;
   showProvider: boolean;
+  filterByProvider: string[];
+  filterByHost: string[];
 }
 
 const El = styled.div`
@@ -52,7 +54,15 @@ const SettingEl = styled.div`
 `;
 
 export function MapArea(props: Props) {
-  const { data, worldShape, countryTaxonomy, showHost, showProvider } = props;
+  const {
+    data,
+    worldShape,
+    countryTaxonomy,
+    showHost,
+    showProvider,
+    filterByProvider,
+    filterByHost,
+  } = props;
   const [selectedOption, setSelectedOption] = useState<
     | 'No. of Projects As Host Countries'
     | 'No. of Projects As Provider Countries'
@@ -110,6 +120,8 @@ export function MapArea(props: Props) {
         selectedOption={selectedOption}
         worldShape={worldShape}
         countryTaxonomy={countryTaxonomy}
+        filterByProvider={filterByProvider}
+        filterByHost={filterByHost}
       />
     </El>
   );
