@@ -13,7 +13,7 @@ import { VizArea } from './VizArea';
 import { SDG_LIST } from './Constants';
 
 const FilterEl = styled.div`
-  width: calc(25% - 0.75rem);
+  width: calc(33.33% - 1.33rem);
   min-width: 10rem;
   flex-grow: 1;
 `;
@@ -152,7 +152,7 @@ function App() {
               backgroundColor: 'var(--white)',
             }}
           >
-            <div className='flex-div flex-wrap margin-bottom-05'>
+            <div className='flex-div flex-wrap margin-bottom-05 gap-07'>
               <FilterEl>
                 <div className='label'>Filter By Host Country</div>
                 <Select
@@ -208,6 +208,20 @@ function App() {
                 </Select>
               </FilterEl>
               <FilterEl>
+                <div className='label'>
+                  Only Show Project with LDCs Involved
+                </div>
+                <Switch
+                  checked={LDCsInvolved}
+                  className='undp-switch margin-top-03'
+                  onChange={e => {
+                    setLDCsInvolved(e);
+                  }}
+                />
+              </FilterEl>
+            </div>
+            <div className='flex-div flex-wrap gap-07'>
+              <FilterEl>
                 <div className='label'>Filter By Thematic Area</div>
                 <Select
                   className='undp-select'
@@ -247,29 +261,15 @@ function App() {
                   ))}
                 </Select>
               </FilterEl>
-            </div>
-            <div className='flex-div flex-wrap'>
               <FilterEl>
                 <div className='label'>
                   Only Show Project with Private Sector Support
                 </div>
                 <Switch
                   checked={showPrivateSupport}
-                  className='undp-switch'
+                  className='undp-switch margin-top-03'
                   onChange={e => {
                     setShowPrivateSupport(e);
-                  }}
-                />
-              </FilterEl>
-              <FilterEl>
-                <div className='label'>
-                  Only Show Project with LDCs Involved
-                </div>
-                <Switch
-                  checked={LDCsInvolved}
-                  className='undp-switch'
-                  onChange={e => {
-                    setLDCsInvolved(e);
                   }}
                 />
               </FilterEl>
