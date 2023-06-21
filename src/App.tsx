@@ -18,6 +18,16 @@ const FilterEl = styled.div`
   flex-grow: 1;
 `;
 
+const FilterContainer = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--white);
+  @media (max-width: 960px) {
+    position: static;
+  }
+`;
+
 function App() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [worldShape, setWorldShape] = useState<any>(undefined);
@@ -143,15 +153,7 @@ function App() {
     <div className='undp-container'>
       {worldShape && rawData && countryTaxonomy && thematicArea ? (
         <div>
-          <div
-            className='margin-bottom-05 padding-top-05 padding-bottom-05'
-            style={{
-              position: 'sticky',
-              top: 0,
-              zIndex: 100,
-              backgroundColor: 'var(--white)',
-            }}
-          >
+          <FilterContainer className='margin-bottom-05 padding-top-05 padding-bottom-05'>
             <div className='flex-div flex-wrap margin-bottom-05 gap-07'>
               <FilterEl>
                 <div className='label'>Filter By Host Country</div>
@@ -274,7 +276,7 @@ function App() {
                 />
               </FilterEl>
             </div>
-          </div>
+          </FilterContainer>
           <VizArea
             filterBySDG={filterBySDG}
             filterByTheme={filterByTheme}
