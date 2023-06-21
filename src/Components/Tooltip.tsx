@@ -25,7 +25,7 @@ const TooltipEl = styled.div<TooltipElProps>`
   position: fixed;
   z-index: 8;
   background-color: var(--gray-300);
-  padding: var(--spacing-05) var(--spacing-07);
+  padding: var(--spacing-05) var(--spacing-07) 0 var(--spacing-07);
   word-wrap: break-word;
   max-width: ${props =>
     props.horizontalAlignment === 'right'
@@ -81,13 +81,15 @@ export function Tooltip(props: Props) {
         </h5>
       </div>
       {selectedOption === 'No. of Projects As Host Countries' ? (
-        <p className='undp-typography margin-bottom-05'>
+        <p className='undp-typography'>
           No of Projects as Host
-          {filterByHost.length === 0
-            ? ''
-            : ` with ${filterByProvider
-                .toString()
-                .replaceAll(',', ', ')} as Provider`}
+          {filterByProvider.length === 0 ? (
+            ''
+          ) : (
+            <span className='bold'>{` with ${filterByProvider
+              .toString()
+              .replaceAll(',', ', ')} as Provider`}</span>
+          )}
           :{' '}
           <span className='bold'>
             {data.noOfProjectsAsHost === undefined
@@ -96,11 +98,15 @@ export function Tooltip(props: Props) {
           </span>
         </p>
       ) : (
-        <p className='undp-typography margin-bottom-05'>
+        <p className='undp-typography'>
           No of Projects as Provider
-          {filterByHost.length === 0
-            ? ''
-            : ` with ${filterByHost.toString().replaceAll(',', ', ')} as Host`}
+          {filterByHost.length === 0 ? (
+            ''
+          ) : (
+            <span className='bold'>{` with ${filterByHost
+              .toString()
+              .replaceAll(',', ', ')} as Host`}</span>
+          )}
           :{' '}
           <span className='bold'>
             {data.noOfProjectsAsProvider === undefined

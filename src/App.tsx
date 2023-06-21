@@ -28,8 +28,6 @@ function App() {
   const [filterByTheme, setFilterByTheme] = useState<string[]>([]);
   const [filterBySDG, setFilterBySDG] = useState<string[]>([]);
   const [regionList, setRegionList] = useState<string[]>([]);
-  const [showUNDPImplemented, setShowUNDPImplemented] = useState(false);
-  const [showUNDPDonor, setShowUNDPDonor] = useState(false);
   const [showPrivateSupport, setShowPrivateSupport] = useState(false);
   const [LDCsInvolved, setLDCsInvolved] = useState(false);
   const [countryTaxonomy, setCountryTaxonomy] = useState<
@@ -101,6 +99,7 @@ function App() {
               .split(',')
               .filter(el => el && el !== '')
               .map(el => el.trim()),
+            'Primary SDG Contribution': d['Primary SDG Contribution'].trim(),
             'Secondary SDG Contribution': d['Secondary SDG Contribution']
               .split(',')
               .filter(el => el && el !== '')
@@ -252,30 +251,6 @@ function App() {
             <div className='flex-div flex-wrap'>
               <FilterEl>
                 <div className='label'>
-                  Only Show Project Implemented by UNDP
-                </div>
-                <Switch
-                  checked={showUNDPImplemented}
-                  className='undp-switch'
-                  onChange={e => {
-                    setShowUNDPImplemented(e);
-                  }}
-                />
-              </FilterEl>
-              <FilterEl>
-                <div className='label'>
-                  Only Show Project with UNDP as Donor
-                </div>
-                <Switch
-                  checked={showUNDPDonor}
-                  className='undp-switch'
-                  onChange={e => {
-                    setShowUNDPDonor(e);
-                  }}
-                />
-              </FilterEl>
-              <FilterEl>
-                <div className='label'>
                   Only Show Project with Private Sector Support
                 </div>
                 <Switch
@@ -307,8 +282,6 @@ function App() {
             filterByProvider={filterByProvider}
             LDCsInvolved={LDCsInvolved}
             showPrivateSupport={showPrivateSupport}
-            showUNDPDonor={showUNDPDonor}
-            showUNDPImplemented={showUNDPImplemented}
             data={rawData}
             countryTaxonomy={countryTaxonomy}
             regionList={regionList}

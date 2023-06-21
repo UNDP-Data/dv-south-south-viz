@@ -21,8 +21,6 @@ interface Props {
   regionList: string[];
   LDCsInvolved: boolean;
   showPrivateSupport: boolean;
-  showUNDPDonor: boolean;
-  showUNDPImplemented: boolean;
 }
 
 const El = styled.div`
@@ -74,8 +72,6 @@ export function VizArea(props: Props) {
     filterByProvider,
     filterBySDG,
     filterByTheme,
-    showUNDPImplemented,
-    showUNDPDonor,
     showPrivateSupport,
     LDCsInvolved,
     regionList,
@@ -96,7 +92,7 @@ export function VizArea(props: Props) {
     filterByProvider.length === 0
       ? dataFilteredByHost
       : dataFilteredByHost.filter(d =>
-          d['Host/Recipient Country/ies'].some(item =>
+          d['Provider Country/ies'].some(item =>
             filterByProvider.includes(item),
           ),
         );
@@ -120,18 +116,12 @@ export function VizArea(props: Props) {
               filterByTheme.includes(item),
             ) || d['Thematic Areas'].some(item => filterByTheme.includes(item)),
         );
-  const dataFilteredByUNDPDonor = !showUNDPDonor
-    ? dataFilteredByThemes
-    : dataFilteredByThemes.filter(d => d['UNDP as Donor']);
   const dataFilteredByPrivateSector = !showPrivateSupport
-    ? dataFilteredByUNDPDonor
-    : dataFilteredByUNDPDonor.filter(d => d['Is the private sector involved?']);
-  const dataFilteredByUNDPImplementor = !showUNDPImplemented
-    ? dataFilteredByPrivateSector
-    : dataFilteredByPrivateSector.filter(d => d['UNDP as Implementor']);
+    ? dataFilteredByThemes
+    : dataFilteredByThemes.filter(d => d['Is the private sector involved?']);
   const dataFilteredByLDCsInvolvement = !LDCsInvolved
-    ? dataFilteredByUNDPImplementor
-    : dataFilteredByUNDPImplementor.filter(d => d['Does it involve LDCs?']);
+    ? dataFilteredByPrivateSector
+    : dataFilteredByPrivateSector.filter(d => d['Does it involve LDCs?']);
   const hostCountryList = [
     ...new Set(
       dataFilteredByLDCsInvolvement
@@ -313,7 +303,8 @@ export function VizArea(props: Props) {
         <h6 className='undp-typography margin-top-07'>SDGs</h6>
         {clickedProject ? (
           <div className='flex-div flex-wrap margin-bottom-05'>
-            {clickedProject['Primary SDG Contribution'] ? (
+            {clickedProject['Primary SDG Contribution'] &&
+            clickedProject['Primary SDG Contribution'] !== '' ? (
               <div>
                 {getSDGIcon(clickedProject['Primary SDG Contribution'], 48)}
               </div>
