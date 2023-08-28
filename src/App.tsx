@@ -13,7 +13,7 @@ import { VizArea } from './VizArea';
 import { SDG_LIST } from './Constants';
 
 const FilterEl = styled.div`
-  width: calc(33.33% - 1.33rem);
+  width: calc(33.33% - 2.33rem);
   min-width: 10rem;
   flex-grow: 1;
 `;
@@ -169,7 +169,7 @@ function App() {
                   onChange={d => {
                     const countryID = countryTaxonomy
                       .filter(el => d.indexOf(el['Country or Area']) !== -1)
-                      .map(el => el['Alpha-3 code-1']);
+                      .map(el => el['Alpha-3 code']);
                     if (d.length === 0) setFilterByHost([]);
                     else setFilterByHost(countryID);
                   }}
@@ -196,7 +196,7 @@ function App() {
                   onChange={d => {
                     const countryID = countryTaxonomy
                       .filter(el => d.indexOf(el['Country or Area']) !== -1)
-                      .map(el => el['Alpha-3 code-1']);
+                      .map(el => el['Alpha-3 code']);
                     if (d.length === 0) setFilterByProvider([]);
                     else setFilterByProvider(countryID);
                   }}

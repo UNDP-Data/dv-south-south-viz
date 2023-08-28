@@ -326,12 +326,10 @@ export function VizArea(props: Props) {
           <div className='flex-div flex-wrap margin-bottom-05 gap-03'>
             {clickedProject['Host/Recipient Country/ies'].map((d, i) => (
               <div className='undp-chip' key={i}>
-                {countryTaxonomy.findIndex(el => el['Alpha-3 code-1'] === d) !==
+                {countryTaxonomy.findIndex(el => el['Alpha-3 code'] === d) !==
                 -1
                   ? countryTaxonomy[
-                      countryTaxonomy.findIndex(
-                        el => el['Alpha-3 code-1'] === d,
-                      )
+                      countryTaxonomy.findIndex(el => el['Alpha-3 code'] === d)
                     ]['Country or Area']
                   : d}
               </div>
@@ -344,12 +342,10 @@ export function VizArea(props: Props) {
           <div className='flex-div flex-wrap margin-bottom-05 gap-03'>
             {clickedProject['Provider Country/ies'].map((d, i) => (
               <div className='undp-chip' key={i}>
-                {countryTaxonomy.findIndex(el => el['Alpha-3 code-1'] === d) !==
+                {countryTaxonomy.findIndex(el => el['Alpha-3 code'] === d) !==
                 -1
                   ? countryTaxonomy[
-                      countryTaxonomy.findIndex(
-                        el => el['Alpha-3 code-1'] === d,
-                      )
+                      countryTaxonomy.findIndex(el => el['Alpha-3 code'] === d)
                     ]['Country or Area']
                   : d}
               </div>

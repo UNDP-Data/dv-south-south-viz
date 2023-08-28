@@ -1,5 +1,5 @@
 export interface CountryGroupDataType {
-  'Alpha-3 code-1': string;
+  'Alpha-3 code': string;
   'Country or Area': string;
   'Alpha-2 code': string;
   'Numeric code': string;

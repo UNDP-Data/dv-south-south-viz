@@ -76,11 +76,10 @@ export function MapArea(props: Props) {
   const countryData: CountryDataType[] = countryTaxonomy.map(d => ({
     ...d,
     noOfProjectAsHost: data.filter(
-      el =>
-        el['Host/Recipient Country/ies'].indexOf(d['Alpha-3 code-1']) !== -1,
+      el => el['Host/Recipient Country/ies'].indexOf(d['Alpha-3 code']) !== -1,
     ).length,
     noOfProjectAsProvider: data.filter(
-      el => el['Provider Country/ies'].indexOf(d['Alpha-3 code-1']) !== -1,
+      el => el['Provider Country/ies'].indexOf(d['Alpha-3 code']) !== -1,
     ).length,
   }));
 

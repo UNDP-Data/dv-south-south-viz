@@ -159,10 +159,10 @@ export function UnivariateMap(props: Props) {
             );
           })}
           {data
-            .filter(d => d['Alpha-3 code-1'] !== 'ATA')
+            .filter(d => d['Alpha-3 code'] !== 'ATA')
             .map((d, i: number) => {
               const index = worldShape.features.findIndex(
-                (el: any) => d['Alpha-3 code-1'] === el.properties.ISO3,
+                (el: any) => d['Alpha-3 code'] === el.properties.ISO3,
               );
               const indicator =
                 selectedOption === 'No. of Projects As Host Countries'
@@ -182,13 +182,13 @@ export function UnivariateMap(props: Props) {
                       country:
                         countryTaxonomy[
                           countryTaxonomy.findIndex(
-                            el => el['Alpha-3 code-1'] === d['Alpha-3 code-1'],
+                            el => el['Alpha-3 code'] === d['Alpha-3 code'],
                           )
                         ]['Country or Area'],
                       continent:
                         countryTaxonomy[
                           countryTaxonomy.findIndex(
-                            el => el['Alpha-3 code-1'] === d['Alpha-3 code-1'],
+                            el => el['Alpha-3 code'] === d['Alpha-3 code'],
                           )
                         ]['Group 1'],
                       noOfProjectsAsHost: d.noOfProjectAsHost,
@@ -202,13 +202,13 @@ export function UnivariateMap(props: Props) {
                       country:
                         countryTaxonomy[
                           countryTaxonomy.findIndex(
-                            el => el['Alpha-3 code-1'] === d['Alpha-3 code-1'],
+                            el => el['Alpha-3 code'] === d['Alpha-3 code'],
                           )
                         ]['Country or Area'],
                       continent:
                         countryTaxonomy[
                           countryTaxonomy.findIndex(
-                            el => el['Alpha-3 code-1'] === d['Alpha-3 code-1'],
+                            el => el['Alpha-3 code'] === d['Alpha-3 code'],
                           )
                         ]['Group 1'],
                       noOfProjectsAsHost: d.noOfProjectAsHost,
@@ -287,7 +287,7 @@ export function UnivariateMap(props: Props) {
                       countryTaxonomy.findIndex(
                         el => el['Country or Area'] === hoverData?.country,
                       )
-                    ]['Alpha-3 code-1'],
+                    ]['Alpha-3 code'],
                 )
                 .map((d: any, i: number) => (
                   <G opacity={!selectedColor ? 1 : 0} key={i}>
@@ -415,13 +415,13 @@ export function UnivariateMap(props: Props) {
           filterByProvider={filterByProvider.map(
             d =>
               countryTaxonomy[
-                countryTaxonomy.findIndex(el => el['Alpha-3 code-1'] === d)
+                countryTaxonomy.findIndex(el => el['Alpha-3 code'] === d)
               ]['Country or Area'],
           )}
           filterByHost={filterByHost.map(
             d =>
               countryTaxonomy[
-                countryTaxonomy.findIndex(el => el['Alpha-3 code-1'] === d)
+                countryTaxonomy.findIndex(el => el['Alpha-3 code'] === d)
               ]['Country or Area'],
           )}
         />
