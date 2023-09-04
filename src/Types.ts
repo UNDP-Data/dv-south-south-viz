@@ -36,7 +36,6 @@ export interface DataTypeFromCSV {
   'Start year': string;
   'End year': string;
   'Thematic Areas': string;
-  'Sub-thematic areas': string;
   'Primary SDG Contribution': string;
   'Secondary SDG Contribution': string;
 }
@@ -57,7 +56,6 @@ export interface FormattedDataType {
   'Start year': number;
   'End year'?: number;
   'Thematic Areas': string[];
-  'Sub-thematic areas': string[];
   'Primary SDG Contribution'?: string;
   'Secondary SDG Contribution': string[];
 }

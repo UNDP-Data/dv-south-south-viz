@@ -43,11 +43,6 @@ export function ProjectCard(props: Props) {
               {d}
             </div>
           ))}
-          {projectData['Sub-thematic areas'].map((d, i) => (
-            <div className='undp-chip' key={i}>
-              {d}
-            </div>
-          ))}
         </div>
       </div>
       <div style={{ padding: '1rem 1rem 0 1rem' }}>

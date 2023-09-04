@@ -110,11 +110,8 @@ export function VizArea(props: Props) {
   const dataFilteredByThemes =
     filterByTheme.length === 0
       ? dataFilteredBySDGs
-      : dataFilteredBySDGs.filter(
-          d =>
-            d['Sub-thematic areas'].some(item =>
-              filterByTheme.includes(item),
-            ) || d['Thematic Areas'].some(item => filterByTheme.includes(item)),
+      : dataFilteredBySDGs.filter(d =>
+          d['Thematic Areas'].some(item => filterByTheme.includes(item)),
         );
   const dataFilteredByPrivateSector = !showPrivateSupport
     ? dataFilteredByThemes
@@ -288,11 +285,6 @@ export function VizArea(props: Props) {
         {clickedProject ? (
           <div className='flex-div flex-wrap margin-bottom-05 gap-03'>
             {clickedProject['Thematic Areas'].map((d, i) => (
-              <div className='undp-chip' key={i}>
-                {d}
-              </div>
-            ))}
-            {clickedProject['Sub-thematic areas'].map((d, i) => (
               <div className='undp-chip' key={i}>
                 {d}
               </div>

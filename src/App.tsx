@@ -70,8 +70,8 @@ function App() {
           );
           const dataFormatted: FormattedDataType[] = data.map(d => ({
             ...d,
-            Description: d.Description.trim(),
-            'Project Name': d['Project Name'].trim(),
+            Description: d.Description?.trim(),
+            'Project Name': d['Project Name']?.trim(),
             'Start year': +d['Start year'],
             'End year':
               d['End year'] && d['End year'] !== ''
@@ -98,16 +98,12 @@ function App() {
               .split(',')
               .filter(el => el && el !== '')
               .map(el => el.trim()),
-            Links: d.Links.split(',')
+            Links: d.Links?.split(',')
               .filter(el => el && el !== '')
               .map(el => el.trim()),
             'Is the private sector involved?':
               d['Is the private sector involved?'] === 'YES',
             'Thematic Areas': d['Thematic Areas']
-              .split(',')
-              .filter(el => el && el !== '')
-              .map(el => el.trim()),
-            'Sub-thematic areas': d['Sub-thematic areas']
               .split(',')
               .filter(el => el && el !== '')
               .map(el => el.trim()),
@@ -120,21 +116,13 @@ function App() {
           }));
           setRawData(dataFormatted);
           const thematicAreaList = [
-            ...new Set(
-              [
-                ...new Set(
-                  dataFormatted
-                    .map(d => d['Thematic Areas'])
-                    .reduce((acc, curr) => acc.concat(curr), []),
-                ),
-              ].concat([
-                ...new Set(
-                  dataFormatted
-                    .map(d => d['Sub-thematic areas'])
-                    .reduce((acc, curr) => acc.concat(curr), []),
-                ),
-              ]),
-            ),
+            ...new Set([
+              ...new Set(
+                dataFormatted
+                  .map(d => d['Thematic Areas'])
+                  .reduce((acc, curr) => acc.concat(curr), []),
+              ),
+            ]),
           ];
           const RegionList = [
             ...new Set([
