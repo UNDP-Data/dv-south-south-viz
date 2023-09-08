@@ -49,7 +49,10 @@ function App() {
         json,
         'https://raw.githubusercontent.com/UNDP-Data/dv-world-map-geojson-data/main/worldMap.json',
       )
-      .defer(csv, './data.csv')
+      .defer(
+        csv,
+        'https://raw.githubusercontent.com/UNDP-Data/dv-south-south-projects-mapping-viz/main/public/data.csv',
+      )
       .defer(
         json,
         'https://raw.githubusercontent.com/UNDP-Data/country-taxonomy-from-azure/main/country_territory_groups.json',
