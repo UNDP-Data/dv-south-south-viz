@@ -31,7 +31,7 @@ const El = styled.div`
 `;
 
 const ProjectCardContainer = styled.div`
-  width: calc(25% - 0.75rem - 2px);
+  width: calc(20% - 0.8rem - 2px);
   min-width: min(100%, 320px);
   color: var(--black);
   text-decoration: none;
@@ -164,11 +164,8 @@ export function VizArea(props: Props) {
           filterByHost={filterByHost}
         />
       )}
-      <div className='flex-div flex-wrap'>
-        <El
-          className='undp-scrollbar margin-top-07'
-          style={{ width: 'calc(66.67% - 2.5rem)' }}
-        >
+      <div className='flex-div flex-wrap gap-07'>
+        <El className='undp-scrollbar margin-top-07' style={{ flexGrow: 2 }}>
           <h5 className='undp-typography bold margin-bottom-05'>
             Projects by SDGs
           </h5>
@@ -180,10 +177,7 @@ export function VizArea(props: Props) {
             />
           </div>
         </El>
-        <El
-          className='undp-scrollbar margin-top-07'
-          style={{ width: 'calc(33.33% - 2.5rem)' }}
-        >
+        <El className='undp-scrollbar margin-top-07' style={{ flexGrow: 1 }}>
           <h5 className='undp-typography bold margin-bottom-05'>
             Projects by Regions Involved
           </h5>
