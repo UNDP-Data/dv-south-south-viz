@@ -55,9 +55,6 @@ const ProjectCardContainer = styled.div`
   @media (min-width: 1440px) {
     width: calc(25% - 0.75rem - 2px);
   }
-  @media (min-width: 2196px) {
-    width: calc(20% - 0.8rem - 2px);
-  }
   &:hover {
     background-color: var(--gray-400);
   }
