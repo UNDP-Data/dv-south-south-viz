@@ -31,8 +31,7 @@ const El = styled.div`
 `;
 
 const ProjectCardContainer = styled.div`
-  width: calc(20% - 0.8rem - 2px);
-  min-width: min(100%, 320px);
+  width: calc(33.3% - 0.67rem - 2px);
   color: var(--black);
   text-decoration: none;
   background-color: var(--gray-100);
@@ -51,9 +50,6 @@ const ProjectCardContainer = styled.div`
   }
   @media (min-width: 1312px) {
     width: calc(33.3% - 0.67rem - 2px);
-  }
-  @media (min-width: 1440px) {
-    width: calc(25% - 0.75rem - 2px);
   }
   &:hover {
     background-color: var(--gray-400);
