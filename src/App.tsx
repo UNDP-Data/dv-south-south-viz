@@ -51,7 +51,7 @@ function App() {
       )
       .defer(
         csv,
-        'https://raw.githubusercontent.com/UNDP-Data/dv-south-south-projects-mapping-viz/main/public/data.csv',
+        'https://raw.githubusercontent.com/UNDP-Data/dv-south-south-projects-mapping-data-repo/main/data.csv',
       )
       .defer(
         json,

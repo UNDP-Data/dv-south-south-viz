@@ -1,5 +1,5 @@
 # Project Title
-#### Project description [Click here to see the interface]({{link to the site here}}).
+#### Visualizing South South projects [Click here to see the interface](https://lively-ocean-024335710.4.azurestaticapps.net).
 
 ## Table of Contents
 * [Link for the visualization](#section-01)
@@ -16,17 +16,19 @@
 * [Contact](#section-11)
 
 ## Link for the visualization<a name="section-01"></a>
-[{{link to the site here}}]({{link to the site here}})
+[https://lively-ocean-024335710.4.azurestaticapps.net](https://lively-ocean-024335710.4.azurestaticapps.net)
 
 ## Deployment<a name="deployment"></a>
-The Production site deployed using Azure Static Web App and work flow can be found [here]({{link to the site here}})
+The Production site deployed using Azure Static Web App and work flow can be found [here](https://github.com/UNDP-Data/dv-south-south-projects-mapping-viz/blob/main/.github/workflows/azure-static-web-apps-lively-ocean-024335710.yml)
 
 ## Steps to Integrating the Visualization in the Data Future Platform or Any Other Page<a name="section-02"></a>
-__All the different view of the visualization and steps to interegrate/embed it__
+Add the following div in the page
+```
+<div id="root"></div>
 
 Apart from the mentioned `div` above the following `script` and `link` needs to be added to the `head` or in the embed code
 ```
-<script defer src="<Link to the Visualization Mentioned Above>/static/js/main.js"></script>
+<script defer src="https://lively-ocean-024335710.4.azurestaticapps.net/index.js"></script>
 <link rel="stylesheet" href="https://undp-data.github.io/stylesheets-for-viz/style/mainStyleSheet.css" />
 <link rel="stylesheet" href="https://undp-data.github.io/stylesheets-for-viz/style/StyleForGraphingInterface.css" />
 <link rel="stylesheet" href="https://undp-data.github.io/stylesheets-for-viz/style/StyleForGraph.css" />
@@ -36,7 +38,10 @@ Apart from the mentioned `div` above the following `script` and `link` needs to 
 _All the pages on the DFP or other places like viva topics etc. where this visualization is embeded or used._
 
 ## Related Repos<a name="section-04"></a>
-_List of all the repo that are used in this project as dataset, meta data, css etc._
+* [__country-taxonomy-from-azure__](https://github.com/UNDP-Data/country-taxonomy-from-azure): This is data sheet with meta data for Countries
+* [__dv-south-south-projects-mapping-data-repo__](https://github.com/UNDP-Data/dv-south-south-projects-mapping-data-repo): This is the data sheet for visualization
+* [__dv-world-map-geojson-data__](https://github.com/UNDP-Data/dv-world-map-geojson-data): This is geoJson file for world map
+* [__stylesheet-for-viz__](https://github.com/UNDP-Data/stylesheets-for-viz): Repo which defines the css settings for the project
 
 ## Global CSS for UI and Graphs<a name="section-05"></a>
 __Git Repo__: https://github.com/UNDP-Data/stylesheets-for-viz
@@ -59,8 +64,8 @@ This project is bootstrapped with [`Vite`](https://vitejs.dev/) and was created 
 Run the terminal or command prompt and then run the following
 
 ```
-git clone https://github.com/UNDP-Data/{{projectName}}.git
-cd {{projectName}}
+git clone https://github.com/UNDP-Data/dv-south-south-projects-mapping-viz.git
+cd dv-south-south-projects-mapping-viz
 npm install
 ```
 
