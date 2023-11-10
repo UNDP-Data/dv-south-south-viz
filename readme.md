@@ -13,7 +13,6 @@
 * [Local Deployment](#section-08)
 * [Available Scripts](#section-09)
 * [Tooling Setup](#section-10)
-* [Contact](#section-11)
 
 ## Link for the visualization<a name="section-01"></a>
 [https://lively-ocean-024335710.4.azurestaticapps.net](https://lively-ocean-024335710.4.azurestaticapps.net)
@@ -52,7 +51,11 @@ __Link for stylesheets__
 * https://undp-data.github.io/stylesheets-for-viz/style/StyleForGraph.css
 
 ## Build with<a name="section-06"></a>
-_All the main library/frameworks used in the project_
+* __React__: Used as MVC framework.
+* __styled-components__: Utilizes tagged template literals and the power of CSS, allows to write actual CSS code to style the components in JS/TS.
+* __Various D3 Libraries__: Used for visualizations, adding interaction and reading the csv data file.
+* __lodash__: Used for manipulating and iterating arrays and objects.
+* __undp-viz-colors__: This is package for defining the visualization color palette.
 
 ## Installation<a name="section-07"></a>
 This project uses `npm`. For installation you will need to install `node` and `npm`, if you don't already have it. `node` and `npm` can be installed from [here](https://nodejs.org/en/download/).
@@ -85,5 +88,3 @@ This project uses ESLint integrated with prettier, which verifies and formats yo
 
 This project is build in Visual Studio Code, therefore the project is already set up to work with. Install it from [here](https://code.visualstudio.com/) and then install this [eslint plugin](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and you should be good to go.
 
-## Contact<a name="section-11"></a>
-_name and email id of the author_
