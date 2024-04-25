@@ -16,55 +16,37 @@ export interface CountryGroupDataType {
 }
 
 export interface CountryDataType extends CountryGroupDataType {
-  noOfProjectAsProvider: number;
-  noOfProjectAsHost: number;
+  noOfProjects: number;
 }
 
 export interface DataTypeFromCSV {
-  Number: string;
-  'Project Name': string;
-  Links: string;
-  Description: string;
-  'Host/Recipient Country/ies': string;
-  'Provider Country/ies': string;
-  'Regions Involved': string;
-  'Entity/ies Supporting and/or Implementing': string;
-  'Is the private sector involved?': string;
-  'Does it involve LDCs?': string;
-  'UNDP as Implementor': string;
-  'UNDP as Donor': string;
-  'Start year': string;
-  'End year': string;
-  'Thematic Areas': string;
-  'Primary SDG Contribution': string;
-  'Secondary SDG Contribution': string;
+  'Obs ID': string;
+  'Regional Bureau': string;
+  'ISO-3 Code': string;
+  Typology: string;
+  Method: string;
+  'Approach used by UNDP': string;
+  SDG: string;
+  'Thematic Area': string;
+  'Partners Involved': string;
 }
 
 export interface FormattedDataType {
-  Number: number;
-  'Project Name': string;
-  Links: string[];
-  Description: string;
-  'Host/Recipient Country/ies': string[];
-  'Provider Country/ies': string[];
-  'Regions Involved': string[];
-  'Entity/ies Supporting and/or Implementing': string[];
-  'Is the private sector involved?': boolean;
-  'Does it involve LDCs?': boolean;
-  'UNDP as Implementor': boolean;
-  'UNDP as Donor': boolean;
-  'Start year': number;
-  'End year'?: number;
-  'Thematic Areas': string[];
-  'Primary SDG Contribution'?: string;
-  'Secondary SDG Contribution': string[];
+  'Obs ID': string;
+  'Regional Bureau': string;
+  'ISO-3 Code'?: string;
+  Typology: string[];
+  Method: string;
+  'Approach used by UNDP': string[];
+  SDG: string[];
+  'Thematic Area': string[];
+  'Partners Involved': string[];
 }
 
 export interface HoverDataType {
   country: string;
   continent: string;
-  noOfProjectsAsHost?: number;
-  noOfProjectsAsProvider?: number;
+  noOfProjects?: number;
   xPosition: number;
   yPosition: number;
 }

@@ -6,10 +6,11 @@ interface Props {
   barList: string[];
   svgWidth: number;
   svgHeight: number;
+  split?: boolean;
 }
 
 export function HorizontalGraph(props: Props) {
-  const { data, svgWidth, svgHeight, barList } = props;
+  const { data, svgWidth, svgHeight, barList, split } = props;
   const margin = {
     top: 10,
     bottom: 10,
@@ -42,23 +43,100 @@ export function HorizontalGraph(props: Props) {
                 fill={UNDPColorModule.graphMainColor}
                 height={yScale.bandwidth()}
               />
-              <text
-                x={0}
-                y={(yScale(d) as number) + yScale.bandwidth() / 2}
-                fontSize='14px'
-                fontWeight='bold'
-                textAnchor='end'
-                fill='#110848'
-                dx='-5px'
-                dy={5}
-              >
-                {d}
-              </text>
+              {!split ? (
+                d === 'Europe and Central Asia' ? (
+                  <>
+                    <text
+                      x={0}
+                      y={(yScale(d) as number) + yScale.bandwidth() / 2}
+                      fontSize='14px'
+                      textAnchor='end'
+                      fill='#110848'
+                      dx='-5px'
+                      dy={-2.5}
+                    >
+                      Europe &
+                    </text>
+                    <text
+                      x={0}
+                      y={(yScale(d) as number) + yScale.bandwidth() / 2}
+                      fontSize='14px'
+                      textAnchor='end'
+                      fill='#110848'
+                      dx='-5px'
+                      dy={12.5}
+                    >
+                      Central Asia
+                    </text>
+                  </>
+                ) : d === 'Latin America and Caribbeans' ? (
+                  <>
+                    <text
+                      x={0}
+                      y={(yScale(d) as number) + yScale.bandwidth() / 2}
+                      fontSize='14px'
+                      textAnchor='end'
+                      fill='#110848'
+                      dx='-5px'
+                      dy={-2.5}
+                    >
+                      Latin America
+                    </text>
+                    <text
+                      x={0}
+                      y={(yScale(d) as number) + yScale.bandwidth() / 2}
+                      fontSize='14px'
+                      textAnchor='end'
+                      fill='#110848'
+                      dx='-5px'
+                      dy={12.5}
+                    >
+                      & Caribbeans
+                    </text>
+                  </>
+                ) : (
+                  <text
+                    x={0}
+                    y={(yScale(d) as number) + yScale.bandwidth() / 2}
+                    fontSize='14px'
+                    textAnchor='end'
+                    fill='#110848'
+                    dx='-5px'
+                    dy={5}
+                  >
+                    {d}
+                  </text>
+                )
+              ) : (
+                <>
+                  <text
+                    x={0}
+                    y={(yScale(d) as number) + yScale.bandwidth() / 2}
+                    fontSize='14px'
+                    textAnchor='end'
+                    fill='#110848'
+                    dx='-5px'
+                    dy={-2.5}
+                  >
+                    {d.split(' ')[0]}
+                  </text>
+                  <text
+                    x={0}
+                    y={(yScale(d) as number) + yScale.bandwidth() / 2}
+                    fontSize='14px'
+                    textAnchor='end'
+                    fill='#110848'
+                    dx='-5px'
+                    dy={12.5}
+                  >
+                    {d.split(' ')[1]}
+                  </text>
+                </>
+              )}
               <text
                 x={xScale(data[i])}
                 y={(yScale(d) as number) + yScale.bandwidth() / 2}
                 fontSize='18px'
-                fontWeight='bold'
                 textAnchor='start'
                 fill={UNDPColorModule.graphMainColor}
                 dx='5px'

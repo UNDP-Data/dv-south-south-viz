@@ -37,3 +37,38 @@ export const SDG_VALUE = [
   'Peace, Justice, and Strong Institutions',
   'Partnerships for the Goals',
 ];
+
+export const REGION_NAME = [
+  {
+    id: 'RBA',
+    name: 'Africa',
+  },
+  {
+    id: 'RBAS',
+    name: 'Arab states',
+  },
+  {
+    id: 'RBAP',
+    name: 'Asia Pacific',
+  },
+  {
+    id: 'RBEC',
+    name: 'Europe and Central Asia',
+  },
+  {
+    id: 'RBLAC',
+    name: 'Latin America and Caribbeans',
+  },
+  {
+    id: 'BERA',
+    name: 'Global',
+  },
+  {
+    id: 'BPPS',
+    name: 'Global',
+  },
+  {
+    id: 'CB',
+    name: 'Global',
+  },
+];

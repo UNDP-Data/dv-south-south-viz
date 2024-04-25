@@ -6,11 +6,6 @@ import { HoverDataType } from '../Types';
 
 interface Props {
   data: HoverDataType;
-  selectedOption:
-    | 'No. of Projects As Host Countries'
-    | 'No. of Projects As Provider Countries';
-  filterByProvider: string[];
-  filterByHost: string[];
 }
 
 interface TooltipElProps {
@@ -44,7 +39,7 @@ const TooltipEl = styled.div<TooltipElProps>`
 `;
 
 export function Tooltip(props: Props) {
-  const { data, selectedOption, filterByProvider, filterByHost } = props;
+  const { data } = props;
   const formatData = (d: undefined | number) => {
     if (d === undefined) return d;
 
@@ -80,41 +75,14 @@ export function Tooltip(props: Props) {
           </span>
         </h5>
       </div>
-      {selectedOption === 'No. of Projects As Host Countries' ? (
-        <p className='undp-typography'>
-          No of Projects as Host
-          {filterByProvider.length === 0 ? (
-            ''
-          ) : (
-            <span className='bold'>{` with ${filterByProvider
-              .toString()
-              .replaceAll(',', ', ')} as Provider`}</span>
-          )}
-          :{' '}
-          <span className='bold'>
-            {data.noOfProjectsAsHost === undefined
-              ? 'N/A'
-              : formatData(data.noOfProjectsAsHost)}
-          </span>
-        </p>
-      ) : (
-        <p className='undp-typography'>
-          No of Projects as Provider
-          {filterByHost.length === 0 ? (
-            ''
-          ) : (
-            <span className='bold'>{` with ${filterByHost
-              .toString()
-              .replaceAll(',', ', ')} as Host`}</span>
-          )}
-          :{' '}
-          <span className='bold'>
-            {data.noOfProjectsAsProvider === undefined
-              ? 'N/A'
-              : formatData(data.noOfProjectsAsProvider)}
-          </span>
-        </p>
-      )}
+      <p className='undp-typography'>
+        No of Initiatives:{' '}
+        <span className='bold'>
+          {data.noOfProjects === undefined
+            ? 'N/A'
+            : formatData(data.noOfProjects)}
+        </span>
+      </p>
     </TooltipEl>
   );
 }

@@ -3,14 +3,14 @@ import { csv, json } from 'd3-request';
 import { useEffect, useState } from 'react';
 import sortBy from 'lodash.sortby';
 import styled from 'styled-components';
-import { Select, Switch } from 'antd';
+import { Radio, Select } from 'antd';
 import {
   CountryGroupDataType,
   DataTypeFromCSV,
   FormattedDataType,
 } from './Types';
 import { VizArea } from './VizArea';
-import { SDG_LIST } from './Constants';
+import { REGION_NAME, SDG_LIST } from './Constants';
 
 const FilterEl = styled.div`
   width: calc(33.33% - 2.33rem);
@@ -33,13 +33,20 @@ function App() {
   const [worldShape, setWorldShape] = useState<any>(undefined);
   const [rawData, setRawData] = useState<FormattedDataType[]>([]);
   const [thematicArea, setThematicArea] = useState<string[]>([]);
-  const [filterByHost, setFilterByHost] = useState<string[]>([]);
-  const [filterByProvider, setFilterByProvider] = useState<string[]>([]);
   const [filterByTheme, setFilterByTheme] = useState<string[]>([]);
   const [filterBySDG, setFilterBySDG] = useState<string[]>([]);
+  const [filterByPartners, setFilterByPartners] = useState<string[]>([]);
+  const [filterByApproach, setFilterByApproach] = useState<string | undefined>(
+    undefined,
+  );
   const [regionList, setRegionList] = useState<string[]>([]);
-  const [showPrivateSupport, setShowPrivateSupport] = useState(false);
-  const [LDCsInvolved, setLDCsInvolved] = useState(false);
+  const [methodList, setMethodList] = useState<string[]>([]);
+  const [approachList, setApproachList] = useState<string[]>([]);
+  const [partnersList, setPartnersList] = useState<string[]>([]);
+  const [typologyFilter, setTypologyFilter] = useState('All');
+  const [methodFilter, setMethodFilter] = useState<string | undefined>(
+    undefined,
+  );
   const [countryTaxonomy, setCountryTaxonomy] = useState<
     CountryGroupDataType[]
   >([]);
@@ -51,7 +58,7 @@ function App() {
       )
       .defer(
         csv,
-        'https://raw.githubusercontent.com/UNDP-Data/dv-south-south-projects-mapping-data-repo/main/data.csv',
+        'https://raw.githubusercontent.com/UNDP-Data/dv-south-south-data-repo/main/data.csv',
       )
       .defer(
         json,
@@ -73,149 +80,138 @@ function App() {
           );
           const dataFormatted: FormattedDataType[] = data.map(d => ({
             ...d,
-            Description: d.Description?.trim(),
-            'Project Name': d['Project Name']?.trim(),
-            'Start year': +d['Start year'],
-            'End year':
-              d['End year'] && d['End year'] !== ''
-                ? +d['End year']
-                : undefined,
-            'Does it involve LDCs?': d['Does it involve LDCs?'] === 'YES',
-            'UNDP as Donor': d['UNDP as Donor'] === 'YES',
-            'UNDP as Implementor': d['UNDP as Implementor'] === 'YES',
-            'Host/Recipient Country/ies': d['Host/Recipient Country/ies']
-              .split(',')
-              .filter(el => el && el !== '')
+            'Obs ID': d['Obs ID'],
+            'Partners Involved': d['Partners Involved']
+              .split(';')
               .map(el => el.trim()),
-            'Provider Country/ies': d['Provider Country/ies']
-              .split(',')
-              .filter(el => el && el !== '')
+            'Regional Bureau':
+              REGION_NAME[
+                REGION_NAME.findIndex(
+                  el => el.id === d['Regional Bureau'].trim(),
+                )
+              ].name,
+            'ISO-3 Code': d['ISO-3 Code'] === '' ? undefined : d['ISO-3 Code'],
+            Typology: d.Typology.split(';').map(el => el.trim()),
+            'Approach used by UNDP': d['Approach used by UNDP']
+              .split(';')
               .map(el => el.trim()),
-            'Entity/ies Supporting and/or Implementing': d[
-              'Entity/ies Supporting and/or Implementing'
-            ]
-              .split(',')
-              .filter(el => el && el !== '')
+            Method: d.Method.trim(),
+            SDG: d.SDG.split(';')
+              .map(el => `SDG${el}`)
               .map(el => el.trim()),
-            'Regions Involved': d['Regions Involved']
-              .split(',')
-              .filter(el => el && el !== '')
-              .map(el => el.trim()),
-            Links: d.Links?.split(',')
-              .filter(el => el && el !== '')
-              .map(el => el.trim()),
-            'Is the private sector involved?':
-              d['Is the private sector involved?'] === 'YES',
-            'Thematic Areas': d['Thematic Areas']
-              .split(',')
-              .filter(el => el && el !== '')
-              .map(el => el.trim()),
-            'Primary SDG Contribution': d['Primary SDG Contribution'].trim(),
-            'Secondary SDG Contribution': d['Secondary SDG Contribution']
-              .split(',')
-              .filter(el => el && el !== '')
-              .map(el => el.trim()),
-            Number: +d.Number,
+            'Thematic Area': d['Thematic Area'].split(';').map(el => el.trim()),
           }));
           setRawData(dataFormatted);
           const thematicAreaList = [
             ...new Set([
               ...new Set(
                 dataFormatted
-                  .map(d => d['Thematic Areas'])
+                  .map(d => d['Thematic Area'])
                   .reduce((acc, curr) => acc.concat(curr), []),
               ),
             ]),
           ];
-          const RegionList = [
+          const partnersListTemp = [
             ...new Set([
               ...new Set(
                 dataFormatted
-                  .map(d => d['Regions Involved'])
+                  .map(d => d['Partners Involved'])
                   .reduce((acc, curr) => acc.concat(curr), []),
               ),
             ]),
           ];
+          const approachListTemp = [
+            ...new Set([
+              ...new Set(
+                dataFormatted
+                  .map(d => d['Approach used by UNDP'])
+                  .reduce((acc, curr) => acc.concat(curr), []),
+              ),
+            ]),
+          ];
+          const methodListTemp = [
+            ...new Set([...new Set(dataFormatted.map(d => d.Method))]),
+          ].filter(d => d && d !== '');
+          const RegionList = [
+            ...new Set([...new Set(REGION_NAME.map(d => d.name))]),
+          ];
           setThematicArea(sortBy(thematicAreaList, d => d));
-          setRegionList(sortBy(RegionList, d => d));
+          setRegionList(RegionList);
+          setApproachList(sortBy(approachListTemp, d => d));
+          setPartnersList(
+            sortBy(partnersListTemp, d => d).filter(d => d && d !== ''),
+          );
+          setMethodList(sortBy(methodListTemp, d => d));
         },
       );
   }, []);
 
   return (
     <div className='undp-container'>
-      {worldShape && rawData && countryTaxonomy && thematicArea ? (
+      {worldShape &&
+      rawData &&
+      countryTaxonomy &&
+      thematicArea &&
+      approachList &&
+      partnersList ? (
         <div>
           <FilterContainer className='margin-bottom-05 padding-top-05 padding-bottom-05'>
-            <div className='flex-div flex-wrap margin-bottom-05 gap-07'>
+            <div className='flex-div flex-wrap margin-bottom-05 gap-05'>
               <FilterEl>
-                <div className='label'>Filter By Host Country</div>
-                <Select
-                  className='undp-select'
-                  placeholder='All Host Countries'
-                  mode='multiple'
-                  maxTagCount='responsive'
-                  allowClear
-                  clearIcon={<div className='clearIcon' />}
-                  onChange={d => {
-                    const countryID = countryTaxonomy
-                      .filter(el => d.indexOf(el['Country or Area']) !== -1)
-                      .map(el => el['Alpha-3 code']);
-                    if (d.length === 0) setFilterByHost([]);
-                    else setFilterByHost(countryID);
-                  }}
-                >
-                  {countryTaxonomy.map(d => (
-                    <Select.Option
-                      className='undp-select-option'
-                      key={d['Country or Area']}
-                    >
-                      {d['Country or Area']}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </FilterEl>
-              <FilterEl>
-                <div className='label'>Filter By Provider Country</div>
-                <Select
-                  className='undp-select'
-                  placeholder='All Provider Countries'
-                  mode='multiple'
-                  maxTagCount='responsive'
-                  allowClear
-                  clearIcon={<div className='clearIcon' />}
-                  onChange={d => {
-                    const countryID = countryTaxonomy
-                      .filter(el => d.indexOf(el['Country or Area']) !== -1)
-                      .map(el => el['Alpha-3 code']);
-                    if (d.length === 0) setFilterByProvider([]);
-                    else setFilterByProvider(countryID);
-                  }}
-                >
-                  {countryTaxonomy.map(d => (
-                    <Select.Option
-                      className='undp-select-option'
-                      key={d['Country or Area']}
-                    >
-                      {d['Country or Area']}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </FilterEl>
-              <FilterEl>
-                <div className='label'>
-                  Only Show Project with LDCs Involved
-                </div>
-                <Switch
-                  checked={LDCsInvolved}
-                  className='undp-switch margin-top-03'
+                <p className='undp-typography label'>Filter by Typology</p>
+                <Radio.Group
                   onChange={e => {
-                    setLDCsInvolved(e);
+                    // eslint-disable-next-line no-console
+                    setTypologyFilter(e.target.value);
                   }}
-                />
+                  className='undp-button-radio'
+                  value={typologyFilter}
+                >
+                  <Radio.Button value='All'>All</Radio.Button>
+                  <Radio.Button value='LLDC'>LLDC</Radio.Button>
+                  <Radio.Button value='LDC'>LDC</Radio.Button>
+                  <Radio.Button value='SIDS'>SIDS</Radio.Button>
+                </Radio.Group>
+              </FilterEl>
+              <FilterEl>
+                <div className='label'>Filter By Methods</div>
+                <Select
+                  className='undp-select'
+                  placeholder='All Methods'
+                  maxTagCount='responsive'
+                  allowClear
+                  clearIcon={<div className='clearIcon' />}
+                  onChange={d => {
+                    setMethodFilter(d);
+                  }}
+                >
+                  {methodList.map(d => (
+                    <Select.Option className='undp-select-option' key={d}>
+                      {d}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </FilterEl>
+              <FilterEl>
+                <div className='label'>Filter By Approaches</div>
+                <Select
+                  className='undp-select'
+                  placeholder='All Approaches'
+                  allowClear
+                  clearIcon={<div className='clearIcon' />}
+                  onChange={d => {
+                    setFilterByApproach(d);
+                  }}
+                >
+                  {approachList.map(d => (
+                    <Select.Option className='undp-select-option' key={d}>
+                      {d}
+                    </Select.Option>
+                  ))}
+                </Select>
               </FilterEl>
             </div>
-            <div className='flex-div flex-wrap gap-07'>
+            <div className='flex-div flex-wrap gap-05'>
               <FilterEl>
                 <div className='label'>Filter By Thematic Area</div>
                 <Select
@@ -257,30 +253,41 @@ function App() {
                 </Select>
               </FilterEl>
               <FilterEl>
-                <div className='label'>
-                  Only Show Project with Private Sector Support
-                </div>
-                <Switch
-                  checked={showPrivateSupport}
-                  className='undp-switch margin-top-03'
-                  onChange={e => {
-                    setShowPrivateSupport(e);
+                <div className='label'>Filter By Partners</div>
+                <Select
+                  className='undp-select'
+                  placeholder='All Partners'
+                  mode='multiple'
+                  maxTagCount='responsive'
+                  allowClear
+                  clearIcon={<div className='clearIcon' />}
+                  onChange={d => {
+                    setFilterByPartners(d || []);
                   }}
-                />
+                >
+                  {partnersList.map(d => (
+                    <Select.Option className='undp-select-option' key={d}>
+                      {d}
+                    </Select.Option>
+                  ))}
+                </Select>
               </FilterEl>
             </div>
           </FilterContainer>
           <VizArea
             filterBySDG={filterBySDG}
             filterByTheme={filterByTheme}
-            filterByHost={filterByHost}
-            filterByProvider={filterByProvider}
-            LDCsInvolved={LDCsInvolved}
-            showPrivateSupport={showPrivateSupport}
+            filterByApproach={filterByApproach}
+            filterByPartners={filterByPartners}
+            typologyFilter={typologyFilter}
+            methodFilter={methodFilter}
             data={rawData}
             countryTaxonomy={countryTaxonomy}
             regionList={regionList}
             worldShape={worldShape}
+            approachList={approachList}
+            methodList={methodList}
+            partnersList={partnersList}
           />
         </div>
       ) : (

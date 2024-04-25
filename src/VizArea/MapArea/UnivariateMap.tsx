@@ -16,13 +16,8 @@ import { Tooltip } from '../../Components/Tooltip';
 
 interface Props {
   data: CountryDataType[];
-  selectedOption:
-    | 'No. of Projects As Provider Countries'
-    | 'No. of Projects As Host Countries';
   worldShape: any;
   countryTaxonomy: CountryGroupDataType[];
-  filterByHost: string[];
-  filterByProvider: string[];
 }
 
 const LegendEl = styled.div`
@@ -44,14 +39,7 @@ const G = styled.g`
 `;
 
 export function UnivariateMap(props: Props) {
-  const {
-    data,
-    countryTaxonomy,
-    worldShape,
-    selectedOption,
-    filterByHost,
-    filterByProvider,
-  } = props;
+  const { data, countryTaxonomy, worldShape } = props;
   const [selectedColor, setSelectedColor] = useState<string | undefined>(
     undefined,
   );
@@ -67,8 +55,8 @@ export function UnivariateMap(props: Props) {
     .rotate([0, 0])
     .scale(200)
     .translate([475, 375]);
-  const valueArray = [2, 5, 7, 10, 15];
-  const colorArray = UNDPColorModule.sequentialColors.neutralColorsx06;
+  const valueArray = [2, 5, 7, 10, 15, 25];
+  const colorArray = UNDPColorModule.sequentialColors.neutralColorsx07;
   const colorScale = scaleThreshold<number, string>()
     .domain(valueArray)
     .range(colorArray);
@@ -164,11 +152,7 @@ export function UnivariateMap(props: Props) {
               const index = worldShape.features.findIndex(
                 (el: any) => d['Alpha-3 code'] === el.properties.ISO3,
               );
-              const indicator =
-                selectedOption === 'No. of Projects As Host Countries'
-                  ? 'noOfProjectAsHost'
-                  : 'noOfProjectAsProvider';
-              const val = d[indicator];
+              const val = d.noOfProjects;
               const color = val ? colorScale(val) : UNDPColorModule.graphNoData;
 
               return (
@@ -191,8 +175,7 @@ export function UnivariateMap(props: Props) {
                             el => el['Alpha-3 code'] === d['Alpha-3 code'],
                           )
                         ]['Group 1'],
-                      noOfProjectsAsHost: d.noOfProjectAsHost,
-                      noOfProjectsAsProvider: d.noOfProjectAsProvider,
+                      noOfProjects: d.noOfProjects,
                       xPosition: event.clientX,
                       yPosition: event.clientY,
                     });
@@ -211,8 +194,7 @@ export function UnivariateMap(props: Props) {
                             el => el['Alpha-3 code'] === d['Alpha-3 code'],
                           )
                         ]['Group 1'],
-                      noOfProjectsAsHost: d.noOfProjectAsHost,
-                      noOfProjectsAsProvider: d.noOfProjectAsProvider,
+                      noOfProjects: d.noOfProjects,
                       xPosition: event.clientX,
                       yPosition: event.clientY,
                     });
@@ -348,7 +330,7 @@ export function UnivariateMap(props: Props) {
         </g>
       </svg>
       <LegendEl>
-        <h6 className='undp-typography'>{selectedOption}</h6>
+        <h6 className='undp-typography'>No. of initiatives</h6>
         <svg width='100%' viewBox={`0 0 ${340} ${30}`}>
           <g>
             {valueArray.map((d, i) => (
@@ -408,24 +390,7 @@ export function UnivariateMap(props: Props) {
           </g>
         </svg>
       </LegendEl>
-      {hoverData ? (
-        <Tooltip
-          data={hoverData}
-          selectedOption={selectedOption}
-          filterByProvider={filterByProvider.map(
-            d =>
-              countryTaxonomy[
-                countryTaxonomy.findIndex(el => el['Alpha-3 code'] === d)
-              ]['Country or Area'],
-          )}
-          filterByHost={filterByHost.map(
-            d =>
-              countryTaxonomy[
-                countryTaxonomy.findIndex(el => el['Alpha-3 code'] === d)
-              ]['Country or Area'],
-          )}
-        />
-      ) : null}
+      {hoverData ? <Tooltip data={hoverData} /> : null}
     </div>
   );
 }
