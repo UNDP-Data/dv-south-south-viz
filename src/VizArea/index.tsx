@@ -100,20 +100,7 @@ export function VizArea(props: Props) {
             <h3 style={{ color: 'var(--white)' }}>
               {dataFilteredByApproach.length}
             </h3>
-            <p>Total No. of Initiatives</p>
-          </div>
-          <div
-            className='stat-card no-hover'
-            style={{
-              width: 'calc(25% - 0.75rem)',
-              backgroundColor: 'var(--white)',
-              flexBasis: 0,
-            }}
-          >
-            <h3 style={{ color: 'var(--white)' }}>
-              {dataFilteredByApproach.filter(d => d['ISO-3 Code']).length}
-            </h3>
-            <p>No. of Country Initiatives</p>
+            <p>Initiatives utilizes South-South Triangular Cooperation</p>
           </div>
           <div
             className='stat-card no-hover'
@@ -126,11 +113,28 @@ export function VizArea(props: Props) {
             <h3 style={{ color: 'var(--white)' }}>
               {
                 dataFilteredByApproach.filter(
-                  d => !d['ISO-3 Code'] && d['Regional Bureau'] !== 'Global',
+                  d => d.Method === 'Country-To-Country',
                 ).length
               }
             </h3>
-            <p>No. of Regional Initiatives</p>
+            <p>Country-to-Country Exchanges</p>
+          </div>
+          <div
+            className='stat-card no-hover'
+            style={{
+              width: 'calc(25% - 0.75rem)',
+              backgroundColor: 'var(--white)',
+              flexBasis: 0,
+            }}
+          >
+            <h3 style={{ color: 'var(--white)' }}>
+              {
+                dataFilteredByApproach.filter(
+                  d => d.Method === 'Regional' || d.Method === 'Inter-Regional',
+                ).length
+              }
+            </h3>
+            <p>Regional and Inter-Regional Collaboration</p>
           </div>
           <div
             className='stat-card no-hover'
@@ -147,7 +151,7 @@ export function VizArea(props: Props) {
                 ).length
               }
             </h3>
-            <p>No. of Global Initiatives</p>
+            <p>Global Initiatives</p>
           </div>
         </div>
         <MapArea
