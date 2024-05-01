@@ -8,6 +8,7 @@ import { SDG_LIST } from '../Constants';
 import { TreeMap } from './TreeMap';
 import { CirclePacking } from './CirclePacking';
 import { CircleBarChart } from './CircleBarChart';
+import { GraphFooter } from '../Components/GraphFooter';
 
 interface Props {
   data: FormattedDataType[];
@@ -17,11 +18,11 @@ interface Props {
   filterBySDG: string[];
   filterByTheme: string[];
   regionList: string[];
-  filterByApproach?: string;
+  filterByApproach: string[];
   filterByPartners: string[];
   filterByRegions: string[];
   typologyFilter: string;
-  methodFilter?: string;
+  methodFilter: string[];
   approachList: string[];
   methodList: string[];
   partnersList: string[];
@@ -61,9 +62,11 @@ export function VizArea(props: Props) {
           d => d.Typology.indexOf(typologyFilter) !== -1,
         );
   const dataFilteredByMethod =
-    methodFilter === undefined
+    methodFilter.length === 0
       ? dataFilteredByTypology
-      : dataFilteredByTypology.filter(d => d.Method === methodFilter);
+      : dataFilteredByTypology.filter(
+          d => methodFilter.indexOf(d.Method) !== -1,
+        );
   const dataFilteredByPartners =
     filterByPartners.length === 0
       ? dataFilteredByMethod
@@ -77,10 +80,10 @@ export function VizArea(props: Props) {
           d => filterByRegions.indexOf(d['Regional Bureau']) !== -1,
         );
   const dataFilteredByApproach =
-    !filterByApproach || filterByApproach.length === 0
+    filterByApproach.length === 0
       ? dataFilteredByRegion
-      : dataFilteredByRegion.filter(
-          d => d['Approach used by UNDP'].indexOf(filterByApproach) !== -1,
+      : dataFilteredByRegion.filter(d =>
+          haveIntersection(filterByApproach, d['Approach used by UNDP']),
         );
   return (
     <div className='graph-el undp-scrollbar' style={{ height: '80vh' }}>
@@ -88,7 +91,11 @@ export function VizArea(props: Props) {
         <div className='stat-card-container'>
           <div
             className='stat-card no-hover'
-            style={{ width: '33.33%', backgroundColor: 'var(--white)' }}
+            style={{
+              width: 'calc(25% - 0.75rem)',
+              backgroundColor: 'var(--white)',
+              flexBasis: 0,
+            }}
           >
             <h3 style={{ color: 'var(--white)' }}>
               {dataFilteredByApproach.length}
@@ -97,21 +104,50 @@ export function VizArea(props: Props) {
           </div>
           <div
             className='stat-card no-hover'
-            style={{ width: '33.33%', backgroundColor: 'var(--white)' }}
+            style={{
+              width: 'calc(25% - 0.75rem)',
+              backgroundColor: 'var(--white)',
+              flexBasis: 0,
+            }}
           >
             <h3 style={{ color: 'var(--white)' }}>
               {dataFilteredByApproach.filter(d => d['ISO-3 Code']).length}
             </h3>
-            <p>Total No. of Country Initiatives</p>
+            <p>No. of Country Initiatives</p>
           </div>
           <div
             className='stat-card no-hover'
-            style={{ width: '33.33%', backgroundColor: 'var(--white)' }}
+            style={{
+              width: 'calc(25% - 0.75rem)',
+              backgroundColor: 'var(--white)',
+              flexBasis: 0,
+            }}
           >
             <h3 style={{ color: 'var(--white)' }}>
-              {dataFilteredByApproach.filter(d => !d['ISO-3 Code']).length}
+              {
+                dataFilteredByApproach.filter(
+                  d => !d['ISO-3 Code'] && d['Regional Bureau'] !== 'Global',
+                ).length
+              }
             </h3>
-            <p>Total No. of Regional Initiatives</p>
+            <p>No. of Regional Initiatives</p>
+          </div>
+          <div
+            className='stat-card no-hover'
+            style={{
+              width: 'calc(25% - 0.75rem)',
+              backgroundColor: 'var(--white)',
+              flexBasis: 0,
+            }}
+          >
+            <h3 style={{ color: 'var(--white)' }}>
+              {
+                dataFilteredByApproach.filter(
+                  d => !d['ISO-3 Code'] && d['Regional Bureau'] === 'Global',
+                ).length
+              }
+            </h3>
+            <p>No. of Global Initiatives</p>
           </div>
         </div>
         <MapArea
@@ -122,7 +158,7 @@ export function VizArea(props: Props) {
         <div style={{ flexGrow: 1, backgroundColor: 'var(--white)' }}>
           <div className='padding-05'>
             <h5 className='undp-typography margin-bottom-05'>
-              Initiatives by SDGs
+              Initiatives by SDGs*
             </h5>
             <div style={{ height: '400px', minWidth: '800px' }}>
               <BarChart
@@ -131,6 +167,7 @@ export function VizArea(props: Props) {
                 columnID='SDG'
               />
             </div>
+            <GraphFooter text='One initiative can have multiple SDGs' />
           </div>
         </div>
         <div className='flex-div flex-wrap gap-05'>
@@ -166,7 +203,7 @@ export function VizArea(props: Props) {
           >
             <div className='padding-05'>
               <h5 className='undp-typography margin-bottom-05'>
-                Initiatives by Approach
+                Initiatives by Approach*
               </h5>
               <div style={{ height: '400px' }}>
                 <CircleBarChart
@@ -175,6 +212,7 @@ export function VizArea(props: Props) {
                   columnID='Approach used by UNDP'
                 />
               </div>
+              <GraphFooter text='One initiative can have multiple approaches' />
             </div>
           </div>
         </div>
@@ -188,7 +226,7 @@ export function VizArea(props: Props) {
           >
             <div className='padding-05'>
               <h5 className='undp-typography margin-bottom-05'>
-                Initiatives by Methods
+                Initiatives by Methods*
               </h5>
               <div>
                 <CirclePacking
@@ -200,6 +238,7 @@ export function VizArea(props: Props) {
                   }))}
                 />
               </div>
+              <GraphFooter text='One initiative can have multiple methods' />
             </div>
           </div>
           <div
@@ -211,7 +250,7 @@ export function VizArea(props: Props) {
           >
             <div className='padding-05'>
               <h5 className='undp-typography margin-bottom-05'>
-                Initiatives by Partners
+                Initiatives by Partners*
               </h5>
               <div>
                 <CirclePacking
@@ -223,6 +262,7 @@ export function VizArea(props: Props) {
                   }))}
                 />
               </div>
+              <GraphFooter text='One initiative can have multiple partners' />
             </div>
           </div>
         </div>

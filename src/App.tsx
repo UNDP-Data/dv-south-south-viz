@@ -20,17 +20,13 @@ function App() {
   const [filterBySDG, setFilterBySDG] = useState<string[]>([]);
   const [filterByPartners, setFilterByPartners] = useState<string[]>([]);
   const [filterByRegions, setFilterByRegions] = useState<string[]>([]);
-  const [filterByApproach, setFilterByApproach] = useState<string | undefined>(
-    undefined,
-  );
+  const [filterByApproach, setFilterByApproach] = useState<string[]>([]);
   const [regionList, setRegionList] = useState<string[]>([]);
   const [methodList, setMethodList] = useState<string[]>([]);
   const [approachList, setApproachList] = useState<string[]>([]);
   const [partnersList, setPartnersList] = useState<string[]>([]);
   const [typologyFilter, setTypologyFilter] = useState('All');
-  const [methodFilter, setMethodFilter] = useState<string | undefined>(
-    undefined,
-  );
+  const [methodFilter, setMethodFilter] = useState<string[]>([]);
   const [countryTaxonomy, setCountryTaxonomy] = useState<
     CountryGroupDataType[]
   >([]);
@@ -164,9 +160,10 @@ function App() {
                   placeholder='All Methods'
                   maxTagCount='responsive'
                   allowClear
+                  mode='multiple'
                   clearIcon={<div className='clearIcon' />}
                   onChange={d => {
-                    setMethodFilter(d);
+                    setMethodFilter(d || []);
                   }}
                 >
                   {methodList.map(d => (
@@ -201,10 +198,12 @@ function App() {
                 <Select
                   className='undp-select'
                   placeholder='All Approaches'
+                  maxTagCount='responsive'
+                  mode='multiple'
                   allowClear
                   clearIcon={<div className='clearIcon' />}
                   onChange={d => {
-                    setFilterByApproach(d);
+                    setFilterByApproach(d || []);
                   }}
                 >
                   {approachList.map(d => (
