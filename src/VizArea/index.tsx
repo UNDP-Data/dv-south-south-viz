@@ -226,7 +226,7 @@ export function VizArea(props: Props) {
           >
             <div className='padding-05'>
               <h5 className='undp-typography margin-bottom-05'>
-                Initiatives by Methods*
+                Initiatives by Methods
               </h5>
               <div>
                 <CirclePacking
@@ -238,7 +238,6 @@ export function VizArea(props: Props) {
                   }))}
                 />
               </div>
-              <GraphFooter text='One initiative can have multiple methods' />
             </div>
           </div>
           <div
