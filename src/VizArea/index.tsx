@@ -134,7 +134,7 @@ export function VizArea(props: Props) {
                 ).length
               }
             </h3>
-            <p>Regional and Inter-Regional Collaboration</p>
+            <p>Regional and Inter-Regional Collaborations</p>
           </div>
           <div
             className='stat-card no-hover'
@@ -145,11 +145,7 @@ export function VizArea(props: Props) {
             }}
           >
             <h3 style={{ color: 'var(--white)' }}>
-              {
-                dataFilteredByApproach.filter(
-                  d => !d['ISO-3 Code'] && d['Regional Bureau'] === 'Global',
-                ).length
-              }
+              {dataFilteredByApproach.filter(d => d.Method === 'Global').length}
             </h3>
             <p>Global Initiatives</p>
           </div>
