@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import styled from 'styled-components';
-import { geoWinkel3 } from 'd3-geo-projection';
 import UNDPColorModule from 'undp-viz-colors';
 import { zoom } from 'd3-zoom';
-import { format } from 'd3-format';
 import { select } from 'd3-selection';
 import { scaleThreshold } from 'd3-scale';
 import { useEffect, useRef, useState } from 'react';
+import { geoEqualEarth } from 'd3-geo';
 import {
   CountryGroupDataType,
   HoverDataType,
@@ -18,28 +17,16 @@ interface Props {
   data: CountryDataType[];
   worldShape: any;
   countryTaxonomy: CountryGroupDataType[];
+  width: number;
+  height: number;
 }
-
-const LegendEl = styled.div`
-  padding: 0.5rem 0.5rem 0 0.5rem;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: var(--shadow);
-  width: 440px;
-  margin-left: 1rem;
-  margin-top: -1rem;
-  position: relative;
-  z-index: 5;
-  @media (min-width: 961px) {
-    transform: translateY(-100%);
-  }
-`;
 
 const G = styled.g`
   pointer-events: none;
 `;
 
 export function UnivariateMap(props: Props) {
-  const { data, countryTaxonomy, worldShape } = props;
+  const { data, countryTaxonomy, worldShape, width, height } = props;
   const [selectedColor, setSelectedColor] = useState<string | undefined>(
     undefined,
   );
@@ -47,14 +34,11 @@ export function UnivariateMap(props: Props) {
     undefined,
   );
   const [zoomLevel, setZoomLevel] = useState(1);
-  const svgWidth = window.innerWidth > 960 ? 1280 : 960;
-  const svgHeight = window.innerWidth > 960 ? 640 : 530;
+  const svgWidth = 960;
+  const svgHeight = 678;
   const mapSvg = useRef<SVGSVGElement>(null);
   const mapG = useRef<SVGGElement>(null);
-  const projection = geoWinkel3()
-    .rotate([0, 0])
-    .scale(200)
-    .translate([475, 375]);
+  const projection = geoEqualEarth().rotate([0, 0]).scale(190).center([10, 10]);
   const valueArray = [2, 5, 7, 10, 15, 25];
   const colorArray = UNDPColorModule.sequentialColors.neutralColorsx07;
   const colorScale = scaleThreshold<number, string>()
@@ -77,20 +61,14 @@ export function UnivariateMap(props: Props) {
     mapSvgSelect.call(zoomBehavior as any);
   }, [svgHeight, svgWidth]);
   return (
-    <div
-      style={{
-        height: '100%',
-        overflow: 'hidden',
-        backgroundColor: 'var(--gray-200)',
-      }}
-    >
+    <>
       <svg
-        width='100%'
-        height='100%'
+        width={`${width}px`}
+        height={`${height}px`}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         ref={mapSvg}
       >
-        <rect y='-20' width={svgWidth} height={svgHeight + 40} fill='#f7f7f7' />
+        <rect y='-20' width={svgWidth} height={svgHeight + 40} fill='#fff' />
         <g ref={mapG}>
           {worldShape.features.map((d: any, i: number) => {
             if (d.properties.NAME === 'Antarctica') return null;
@@ -329,68 +307,87 @@ export function UnivariateMap(props: Props) {
             : null}
         </g>
       </svg>
-      <LegendEl>
-        <h6 className='undp-typography'>No. of initiatives</h6>
-        <svg width='100%' viewBox={`0 0 ${340} ${30}`}>
-          <g>
-            {valueArray.map((d, i) => (
-              <g
-                key={i}
-                onMouseOver={() => {
-                  setSelectedColor(colorArray[i]);
-                }}
-                onMouseLeave={() => {
-                  setSelectedColor(undefined);
-                }}
-                style={{ cursor: 'pointer' }}
+      <div
+        className='bivariate-legend-container'
+        style={{ position: 'relative' }}
+      >
+        <div className='univariate-legend-el'>
+          <div className='univariate-map-color-legend-element padding-00'>
+            <div>
+              <div
+                className='univariate-map-legend-text'
+                style={{ lineHeight: 'normal' }}
               >
-                <rect
-                  x={(i * 320) / colorArray.length + 1}
-                  y={1}
-                  width={320 / colorArray.length - 2}
-                  height={8}
-                  fill={colorArray[i]}
-                  stroke={
-                    selectedColor === colorArray[i] ? '#212121' : colorArray[i]
-                  }
-                />
-                <text
-                  x={((i + 1) * 320) / colorArray.length}
-                  y={25}
-                  textAnchor='middle'
-                  fontSize={12}
-                  fill='#212121'
-                >
-                  {Math.abs(d) < 1 ? d : format('~s')(d).replace('G', 'B')}
-                </text>
-              </g>
-            ))}
-            <g>
-              <rect
-                onMouseOver={() => {
-                  setSelectedColor(colorArray[valueArray.length]);
-                }}
-                onMouseLeave={() => {
-                  setSelectedColor(undefined);
-                }}
-                x={(valueArray.length * 320) / colorArray.length + 1}
-                y={1}
-                width={320 / colorArray.length - 2}
-                height={8}
-                fill={colorArray[valueArray.length]}
-                stroke={
-                  selectedColor === colorArray[valueArray.length]
-                    ? '#212121'
-                    : colorArray[valueArray.length]
-                }
-                strokeWidth={1}
-                style={{ cursor: 'pointer' }}
-              />
-            </g>
-          </g>
-        </svg>
-      </LegendEl>
+                No. of initiative
+              </div>
+              <svg width='100%' viewBox='0 0 320 30'>
+                <g>
+                  {valueArray.map((d, i) => (
+                    <g
+                      key={i}
+                      onMouseOver={() => {
+                        setSelectedColor(colorArray[i]);
+                      }}
+                      onMouseLeave={() => {
+                        setSelectedColor(undefined);
+                      }}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <rect
+                        x={(i * 320) / colorArray.length + 1}
+                        y={1}
+                        width={320 / colorArray.length - 2}
+                        height={8}
+                        fill={colorArray[i]}
+                        stroke={
+                          selectedColor === colorArray[i]
+                            ? '#212121'
+                            : colorArray[i]
+                        }
+                      />
+                      <text
+                        x={((i + 1) * 320) / colorArray.length}
+                        y={25}
+                        textAnchor='middle'
+                        fontSize={12}
+                        fill='#212121'
+                        style={{
+                          fontFamily: 'var(--fontFamily)',
+                        }}
+                      >
+                        {d}
+                      </text>
+                    </g>
+                  ))}
+                  <g>
+                    <rect
+                      onMouseOver={() => {
+                        setSelectedColor(colorArray[valueArray.length]);
+                      }}
+                      onMouseLeave={() => {
+                        setSelectedColor(undefined);
+                      }}
+                      x={(valueArray.length * 320) / colorArray.length + 1}
+                      y={1}
+                      width={320 / colorArray.length - 2}
+                      height={8}
+                      fill={colorArray[valueArray.length]}
+                      stroke={
+                        selectedColor === colorArray[valueArray.length]
+                          ? '#212121'
+                          : colorArray[valueArray.length]
+                      }
+                      strokeWidth={1}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </g>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
       {hoverData ? <Tooltip data={hoverData} /> : null}
-    </div>
+    </>
   );
 }

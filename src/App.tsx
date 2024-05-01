@@ -2,7 +2,6 @@ import { queue } from 'd3-queue';
 import { csv, json } from 'd3-request';
 import { useEffect, useState } from 'react';
 import sortBy from 'lodash.sortby';
-import styled from 'styled-components';
 import { Radio, Select } from 'antd';
 import {
   CountryGroupDataType,
@@ -10,23 +9,7 @@ import {
   FormattedDataType,
 } from './Types';
 import { VizArea } from './VizArea';
-import { REGION_NAME, SDG_LIST } from './Constants';
-
-const FilterEl = styled.div`
-  width: calc(33.33% - 2.33rem);
-  min-width: 10rem;
-  flex-grow: 1;
-`;
-
-const FilterContainer = styled.div`
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background-color: var(--white);
-  @media (max-width: 960px) {
-    position: static;
-  }
-`;
+import { REGION_NAME, SDG_LIST, SDG_VALUE } from './Constants';
 
 function App() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,6 +19,7 @@ function App() {
   const [filterByTheme, setFilterByTheme] = useState<string[]>([]);
   const [filterBySDG, setFilterBySDG] = useState<string[]>([]);
   const [filterByPartners, setFilterByPartners] = useState<string[]>([]);
+  const [filterByRegions, setFilterByRegions] = useState<string[]>([]);
   const [filterByApproach, setFilterByApproach] = useState<string | undefined>(
     undefined,
   );
@@ -147,17 +131,17 @@ function App() {
   }, []);
 
   return (
-    <div className='undp-container'>
+    <div className='undp-container max-width-1980'>
       {worldShape &&
       rawData &&
       countryTaxonomy &&
       thematicArea &&
       approachList &&
       partnersList ? (
-        <div>
-          <FilterContainer className='margin-bottom-05 padding-top-05 padding-bottom-05'>
-            <div className='flex-div flex-wrap margin-bottom-05 gap-05'>
-              <FilterEl>
+        <div className='flex-div gap-00 dashboard-container'>
+          <div className='settings-container'>
+            <div className='flex-div flex-column gap-05 padding-05'>
+              <div>
                 <p className='undp-typography label'>Filter by Typology</p>
                 <Radio.Group
                   onChange={e => {
@@ -172,8 +156,8 @@ function App() {
                   <Radio.Button value='LDC'>LDC</Radio.Button>
                   <Radio.Button value='SIDS'>SIDS</Radio.Button>
                 </Radio.Group>
-              </FilterEl>
-              <FilterEl>
+              </div>
+              <div>
                 <div className='label'>Filter By Methods</div>
                 <Select
                   className='undp-select'
@@ -191,8 +175,28 @@ function App() {
                     </Select.Option>
                   ))}
                 </Select>
-              </FilterEl>
-              <FilterEl>
+              </div>
+              <div>
+                <div className='label'>Filter By Regions</div>
+                <Select
+                  className='undp-select'
+                  placeholder='All Partners'
+                  mode='multiple'
+                  maxTagCount='responsive'
+                  allowClear
+                  clearIcon={<div className='clearIcon' />}
+                  onChange={d => {
+                    setFilterByRegions(d || []);
+                  }}
+                >
+                  {regionList.map(d => (
+                    <Select.Option className='undp-select-option' key={d}>
+                      {d}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+              <div>
                 <div className='label'>Filter By Approaches</div>
                 <Select
                   className='undp-select'
@@ -209,10 +213,8 @@ function App() {
                     </Select.Option>
                   ))}
                 </Select>
-              </FilterEl>
-            </div>
-            <div className='flex-div flex-wrap gap-05'>
-              <FilterEl>
+              </div>
+              <div>
                 <div className='label'>Filter By Thematic Area</div>
                 <Select
                   className='undp-select'
@@ -231,8 +233,8 @@ function App() {
                     </Select.Option>
                   ))}
                 </Select>
-              </FilterEl>
-              <FilterEl>
+              </div>
+              <div>
                 <div className='label'>Filter By SDGs</div>
                 <Select
                   className='undp-select'
@@ -245,14 +247,14 @@ function App() {
                     setFilterBySDG(d || []);
                   }}
                 >
-                  {SDG_LIST.map(d => (
+                  {SDG_LIST.map((d, i) => (
                     <Select.Option className='undp-select-option' key={d}>
-                      {d}
+                      {d}: {SDG_VALUE[i]}
                     </Select.Option>
                   ))}
                 </Select>
-              </FilterEl>
-              <FilterEl>
+              </div>
+              <div>
                 <div className='label'>Filter By Partners</div>
                 <Select
                   className='undp-select'
@@ -271,9 +273,9 @@ function App() {
                     </Select.Option>
                   ))}
                 </Select>
-              </FilterEl>
+              </div>
             </div>
-          </FilterContainer>
+          </div>
           <VizArea
             filterBySDG={filterBySDG}
             filterByTheme={filterByTheme}
@@ -288,6 +290,7 @@ function App() {
             approachList={approachList}
             methodList={methodList}
             partnersList={partnersList}
+            filterByRegions={filterByRegions}
           />
         </div>
       ) : (

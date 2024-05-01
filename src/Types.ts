@@ -69,3 +69,8 @@ export type SDGColorType =
   | 'sdg15'
   | 'sdg16'
   | 'sdg17';
+
+export interface TreeMapDataType {
+  noOfInitiatives: number;
+  region: string;
+}

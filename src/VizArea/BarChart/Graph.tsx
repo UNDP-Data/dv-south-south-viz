@@ -10,7 +10,6 @@ interface Props {
   barList: string[];
   svgWidth: number;
   svgHeight: number;
-  isSDG: boolean;
 }
 
 interface MouseOverObj {
@@ -52,7 +51,7 @@ const TooltipEl = styled.div<TooltipElProps>`
 `;
 
 export function Graph(props: Props) {
-  const { data, svgWidth, svgHeight, barList, isSDG } = props;
+  const { data, svgWidth, svgHeight, barList } = props;
   const margin = {
     top: 90,
     bottom: 30,
@@ -87,22 +86,18 @@ export function Graph(props: Props) {
                   hoveredSDG ? (hoveredSDG.value === SDG_VALUE[i] ? 1 : 0.4) : 1
                 }
                 onMouseEnter={event => {
-                  if (isSDG) {
-                    setHoveredSDG({
-                      value: SDG_VALUE[i],
-                      xPosition: event.clientX,
-                      yPosition: event.clientY,
-                    });
-                  }
+                  setHoveredSDG({
+                    value: SDG_VALUE[i],
+                    xPosition: event.clientX,
+                    yPosition: event.clientY,
+                  });
                 }}
                 onMouseMove={event => {
-                  if (isSDG) {
-                    setHoveredSDG({
-                      value: SDG_VALUE[i],
-                      xPosition: event.clientX,
-                      yPosition: event.clientY,
-                    });
-                  }
+                  setHoveredSDG({
+                    value: SDG_VALUE[i],
+                    xPosition: event.clientX,
+                    yPosition: event.clientY,
+                  });
                 }}
                 onMouseLeave={() => {
                   setHoveredSDG(undefined);
@@ -113,11 +108,7 @@ export function Graph(props: Props) {
                   y={heightScale(data[i])}
                   width={xScale.bandwidth()}
                   fill={
-                    isSDG
-                      ? UNDPColorModule.sdgColors[
-                          d.toLowerCase() as SDGColorType
-                        ]
-                      : UNDPColorModule.graphMainColor
+                    UNDPColorModule.sdgColors[d.toLowerCase() as SDGColorType]
                   }
                   height={Math.abs(heightScale(data[i]) - heightScale(0))}
                 />
@@ -137,11 +128,7 @@ export function Graph(props: Props) {
                   fontSize='18px'
                   textAnchor='middle'
                   fill={
-                    isSDG
-                      ? UNDPColorModule.sdgColors[
-                          d.toLowerCase() as SDGColorType
-                        ]
-                      : UNDPColorModule.graphMainColor
+                    UNDPColorModule.sdgColors[d.toLowerCase() as SDGColorType]
                   }
                   dy='-5px'
                 >

@@ -1,11 +1,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import styled from 'styled-components';
 import { MapArea } from './MapArea';
 import { FormattedDataType, CountryGroupDataType } from '../Types';
 import { BarChart } from './BarChart';
 import { haveIntersection } from '../Utils/haveIntersection';
 import { SDG_LIST } from '../Constants';
+import { TreeMap } from './TreeMap';
+import { CirclePacking } from './CirclePacking';
+import { CircleBarChart } from './CircleBarChart';
 
 interface Props {
   data: FormattedDataType[];
@@ -17,19 +19,13 @@ interface Props {
   regionList: string[];
   filterByApproach?: string;
   filterByPartners: string[];
+  filterByRegions: string[];
   typologyFilter: string;
   methodFilter?: string;
   approachList: string[];
   methodList: string[];
   partnersList: string[];
 }
-
-const El = styled.div`
-  overflow: auto;
-  position: relative;
-  background-color: var(--gray-200);
-  padding: var(--spacing-05);
-`;
 
 export function VizArea(props: Props) {
   const {
@@ -46,6 +42,7 @@ export function VizArea(props: Props) {
     approachList,
     methodList,
     partnersList,
+    filterByRegions,
   } = props;
   const dataFilteredBySDGs =
     filterBySDG.length === 0
@@ -73,102 +70,162 @@ export function VizArea(props: Props) {
       : dataFilteredByMethod.filter(d =>
           haveIntersection(filterByPartners, d['Partners Involved']),
         );
-  const dataFilteredByApproach = !filterByApproach
-    ? dataFilteredByPartners
-    : dataFilteredByPartners.filter(
-        d => d['Approach used by UNDP'].indexOf(filterByApproach) !== -1,
-      );
+  const dataFilteredByRegion =
+    filterByRegions.length === 0
+      ? dataFilteredByPartners
+      : dataFilteredByPartners.filter(
+          d => filterByRegions.indexOf(d['Regional Bureau']) !== -1,
+        );
+  const dataFilteredByApproach =
+    !filterByApproach || filterByApproach.length === 0
+      ? dataFilteredByRegion
+      : dataFilteredByRegion.filter(
+          d => d['Approach used by UNDP'].indexOf(filterByApproach) !== -1,
+        );
   return (
-    <div className='flex-div flex-column gap-05'>
-      <div className='stat-card-container'>
-        <div className='stat-card no-hover' style={{ width: '33.33%' }}>
-          <h3>{dataFilteredByApproach.length}</h3>
-          <p>Total No. of Initiatives</p>
+    <div className='graph-el undp-scrollbar' style={{ height: '80vh' }}>
+      <div className='padding-05 flex-div flex-column gap-05'>
+        <div className='stat-card-container'>
+          <div
+            className='stat-card no-hover'
+            style={{ width: '33.33%', backgroundColor: 'var(--white)' }}
+          >
+            <h3 style={{ color: 'var(--white)' }}>
+              {dataFilteredByApproach.length}
+            </h3>
+            <p>Total No. of Initiatives</p>
+          </div>
+          <div
+            className='stat-card no-hover'
+            style={{ width: '33.33%', backgroundColor: 'var(--white)' }}
+          >
+            <h3 style={{ color: 'var(--white)' }}>
+              {dataFilteredByApproach.filter(d => d['ISO-3 Code']).length}
+            </h3>
+            <p>Total No. of Country Initiatives</p>
+          </div>
+          <div
+            className='stat-card no-hover'
+            style={{ width: '33.33%', backgroundColor: 'var(--white)' }}
+          >
+            <h3 style={{ color: 'var(--white)' }}>
+              {dataFilteredByApproach.filter(d => !d['ISO-3 Code']).length}
+            </h3>
+            <p>Total No. of Regional Initiatives</p>
+          </div>
         </div>
-        <div className='stat-card no-hover' style={{ width: '33.33%' }}>
-          <h3>{dataFilteredByApproach.filter(d => d['ISO-3 Code']).length}</h3>
-          <p>Total No. of Country Initiatives</p>
+        <MapArea
+          data={dataFilteredByApproach.filter(d => d['ISO-3 Code'])}
+          countryTaxonomy={countryTaxonomy}
+          worldShape={worldShape}
+        />
+        <div style={{ flexGrow: 1, backgroundColor: 'var(--white)' }}>
+          <div className='padding-05'>
+            <h5 className='undp-typography margin-bottom-05'>
+              Initiatives by SDGs
+            </h5>
+            <div style={{ height: '400px', minWidth: '800px' }}>
+              <BarChart
+                data={dataFilteredByApproach}
+                regionList={SDG_LIST}
+                columnID='SDG'
+              />
+            </div>
+          </div>
         </div>
-        <div className='stat-card no-hover' style={{ width: '33.33%' }}>
-          <h3>{dataFilteredByApproach.filter(d => !d['ISO-3 Code']).length}</h3>
-          <p>Total No. of Regional Initiatives</p>
+        <div className='flex-div flex-wrap gap-05'>
+          <div
+            style={{
+              flexGrow: 1,
+              width: 'calc(50% - 0.5rem)',
+              backgroundColor: 'var(--white)',
+            }}
+          >
+            <div className='padding-05'>
+              <h5 className='undp-typography margin-bottom-05'>
+                Initiatives by Regions Involved
+              </h5>
+              <div>
+                <TreeMap
+                  data={regionList.map(d => ({
+                    region: d,
+                    noOfInitiatives: dataFilteredByApproach.filter(
+                      el => el['Regional Bureau'] === d,
+                    ).length,
+                  }))}
+                />
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+              flexGrow: 1,
+              width: 'calc(50% - 0.5rem)',
+              backgroundColor: 'var(--white)',
+            }}
+          >
+            <div className='padding-05'>
+              <h5 className='undp-typography margin-bottom-05'>
+                Initiatives by Approach
+              </h5>
+              <div style={{ height: '400px' }}>
+                <CircleBarChart
+                  data={dataFilteredByApproach}
+                  regionList={approachList}
+                  columnID='Approach used by UNDP'
+                />
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      <MapArea
-        data={dataFilteredByApproach.filter(d => d['ISO-3 Code'])}
-        countryTaxonomy={countryTaxonomy}
-        worldShape={worldShape}
-      />
-      <div className='flex-div flex-wrap gap-05'>
-        <El className='undp-scrollbar' style={{ flexGrow: 2 }}>
-          <h5 className='undp-typography margin-bottom-05'>
-            Initiatives by SDGs
-          </h5>
-          <div style={{ height: '400px', minWidth: '800px' }}>
-            <BarChart
-              data={dataFilteredByApproach}
-              type='SDGs'
-              regionList={SDG_LIST}
-              columnID='SDG'
-            />
+        <div className='flex-div flex-wrap gap-05'>
+          <div
+            style={{
+              flexGrow: 1,
+              width: 'calc(50% - 0.5rem)',
+              backgroundColor: 'var(--white)',
+            }}
+          >
+            <div className='padding-05'>
+              <h5 className='undp-typography margin-bottom-05'>
+                Initiatives by Methods
+              </h5>
+              <div>
+                <CirclePacking
+                  data={methodList.map(d => ({
+                    region: d,
+                    noOfInitiatives: dataFilteredByApproach.filter(
+                      el => el.Method === d,
+                    ).length,
+                  }))}
+                />
+              </div>
+            </div>
           </div>
-        </El>
-        <El className='undp-scrollbar' style={{ flexGrow: 1 }}>
-          <h5 className='undp-typography margin-bottom-05'>
-            Initiatives by Regions Involved
-          </h5>
-          <div style={{ height: '400px' }}>
-            <BarChart
-              data={dataFilteredByApproach}
-              type='regions'
-              regionList={regionList}
-              columnID='Regional Bureau'
-            />
+          <div
+            style={{
+              flexGrow: 1,
+              width: 'calc(50% - 0.5rem)',
+              backgroundColor: 'var(--white)',
+            }}
+          >
+            <div className='padding-05'>
+              <h5 className='undp-typography margin-bottom-05'>
+                Initiatives by Partners
+              </h5>
+              <div>
+                <CirclePacking
+                  data={partnersList.map(d => ({
+                    region: d,
+                    noOfInitiatives: dataFilteredByApproach.filter(
+                      el => el['Partners Involved'].indexOf(d) !== -1,
+                    ).length,
+                  }))}
+                />
+              </div>
+            </div>
           </div>
-        </El>
-      </div>
-      <div className='flex-div flex-wrap gap-05'>
-        <El className='undp-scrollbar' style={{ flexGrow: 1 }}>
-          <h5 className='undp-typography margin-bottom-05'>
-            Initiatives by Approach
-          </h5>
-          <div style={{ height: '400px' }}>
-            <BarChart
-              data={dataFilteredByApproach}
-              type='approach'
-              regionList={approachList}
-              columnID='Approach used by UNDP'
-            />
-          </div>
-        </El>
-        <El className='undp-scrollbar' style={{ flexGrow: 1 }}>
-          <h5 className='undp-typography margin-bottom-05'>
-            Initiatives by Methods
-          </h5>
-          <div style={{ height: '400px' }}>
-            <BarChart
-              data={dataFilteredByApproach.filter(
-                d => d.Method !== '' && d.Method,
-              )}
-              type='method'
-              regionList={methodList}
-              columnID='Method'
-            />
-          </div>
-        </El>
-        <El className='undp-scrollbar' style={{ flexGrow: 1 }}>
-          <h5 className='undp-typography margin-bottom-05'>
-            Initiatives by Partners
-          </h5>
-          <div style={{ height: '400px' }}>
-            <BarChart
-              data={dataFilteredByApproach}
-              type='partners'
-              regionList={partnersList}
-              columnID='Partners Involved'
-            />
-          </div>
-        </El>
+        </div>
       </div>
     </div>
   );

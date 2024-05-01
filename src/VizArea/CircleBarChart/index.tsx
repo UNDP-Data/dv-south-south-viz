@@ -15,7 +15,7 @@ const GraphDiv = styled.div`
   height: 25rem;
 `;
 
-export function BarChart(props: Props) {
+export function CircleBarChart(props: Props) {
   const { data, regionList, columnID } = props;
 
   const [svgWidth, setSvgWidth] = useState(0);

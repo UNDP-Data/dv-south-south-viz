@@ -1,33 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
-import {
-  CountryDataType,
-  CountryGroupDataType,
-  FormattedDataType,
-} from '../../Types';
-import { UnivariateMap } from './UnivariateMap';
+import { TreeMapDataType } from '../../Types';
+import { Graph } from './Graph';
 
 interface Props {
-  data: FormattedDataType[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  worldShape: any;
-  countryTaxonomy: CountryGroupDataType[];
+  data: TreeMapDataType[];
 }
-export function MapArea(props: Props) {
-  const { data, worldShape, countryTaxonomy } = props;
-
-  const countryData: CountryDataType[] = countryTaxonomy.map(d => ({
-    ...d,
-    noOfProjects: data.filter(el => el['ISO-3 Code'] === d['Alpha-3 code'])
-      .length,
-  }));
-
+export function TreeMap(props: Props) {
+  const { data } = props;
   const [svgWidth, setSvgWidth] = useState(0);
   const [svgHeight, setSvgHeight] = useState(0);
 
   const graphDiv = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (graphDiv.current) {
-      setSvgHeight(graphDiv.current.clientHeight || 570);
+      setSvgHeight((graphDiv.current.clientWidth * 3) / 4 || 190 * 3);
       setSvgWidth(graphDiv.current.clientWidth || 760);
     }
   }, [graphDiv?.current]);
@@ -57,13 +43,7 @@ export function MapArea(props: Props) {
           ref={graphDiv}
         >
           {svgWidth && svgHeight ? (
-            <UnivariateMap
-              data={countryData}
-              worldShape={worldShape}
-              countryTaxonomy={countryTaxonomy}
-              width={svgWidth}
-              height={svgHeight}
-            />
+            <Graph data={data} width={svgWidth} height={svgHeight} />
           ) : null}
         </div>
       </div>
