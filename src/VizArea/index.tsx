@@ -100,7 +100,7 @@ export function VizArea(props: Props) {
             <h3 style={{ color: 'var(--white)' }}>
               {dataFilteredByApproach.length}
             </h3>
-            <p>Initiatives utilizes South-South Triangular Cooperation</p>
+            <p>Initiatives Utilized South-South and Triangular Cooperation</p>
           </div>
           <div
             className='stat-card no-hover'
