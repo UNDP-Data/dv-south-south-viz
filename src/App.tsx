@@ -11,7 +11,13 @@ import {
 import { VizArea } from './VizArea';
 import { REGION_NAME, SDG_LIST, SDG_VALUE } from './Constants';
 
-function App() {
+interface Props {
+  typology: string | null;
+}
+
+function App(props: Props) {
+  const { typology } = props;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [worldShape, setWorldShape] = useState<any>(undefined);
   const [rawData, setRawData] = useState<FormattedDataType[]>([]);
@@ -25,7 +31,7 @@ function App() {
   const [methodList, setMethodList] = useState<string[]>([]);
   const [approachList, setApproachList] = useState<string[]>([]);
   const [partnersList, setPartnersList] = useState<string[]>([]);
-  const [typologyFilter, setTypologyFilter] = useState('All');
+  const [typologyFilter, setTypologyFilter] = useState(typology || 'All');
   const [methodFilter, setMethodFilter] = useState<string[]>([]);
   const [countryTaxonomy, setCountryTaxonomy] = useState<
     CountryGroupDataType[]
