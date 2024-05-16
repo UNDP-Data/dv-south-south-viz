@@ -10,6 +10,7 @@ import {
 } from './Types';
 import { VizArea } from './VizArea';
 import { REGION_NAME, SDG_LIST, SDG_VALUE } from './Constants';
+import MapData from './VizArea/MapArea/MapData/map.json';
 
 interface Props {
   typology: string | null;
@@ -18,8 +19,6 @@ interface Props {
 function App(props: Props) {
   const { typology } = props;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [worldShape, setWorldShape] = useState<any>(undefined);
   const [rawData, setRawData] = useState<FormattedDataType[]>([]);
   const [thematicArea, setThematicArea] = useState<string[]>([]);
   const [filterByTheme, setFilterByTheme] = useState<string[]>([]);
@@ -39,10 +38,6 @@ function App(props: Props) {
   useEffect(() => {
     queue()
       .defer(
-        json,
-        'https://raw.githubusercontent.com/UNDP-Data/dv-world-map-geojson-data/main/worldMap.json',
-      )
-      .defer(
         csv,
         'https://raw.githubusercontent.com/UNDP-Data/dv-south-south-data-repo/main/data.csv',
       )
@@ -53,14 +48,11 @@ function App(props: Props) {
       .await(
         (
           err: unknown,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          worldShapeData: any,
           data: DataTypeFromCSV[],
           countryTaxonomyData: CountryGroupDataType[],
         ) => {
           // eslint-disable-next-line @typescript-eslint/no-throw-literal
           if (err) throw err;
-          setWorldShape(worldShapeData);
           setCountryTaxonomy(
             sortBy(countryTaxonomyData, d => d['Country or Area']),
           );
@@ -134,8 +126,7 @@ function App(props: Props) {
 
   return (
     <div className='undp-container max-width-1980'>
-      {worldShape &&
-      rawData &&
+      {rawData &&
       countryTaxonomy &&
       thematicArea &&
       approachList &&
@@ -291,7 +282,7 @@ function App(props: Props) {
             data={rawData}
             countryTaxonomy={countryTaxonomy}
             regionList={regionList}
-            worldShape={worldShape}
+            worldShape={MapData}
             approachList={approachList}
             methodList={methodList}
             partnersList={partnersList}
